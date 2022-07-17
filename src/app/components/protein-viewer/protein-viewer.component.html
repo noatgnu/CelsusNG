@@ -1,0 +1,78 @@
+<div class="container-fluid" *ngIf="uniprotData">
+  <div class="row">
+    <div class="col-5">
+      <div class="card">
+        <div class="card-body">
+          <p>
+            <b class="display-5">{{uniprotData.primaryAccession}} - {{uniprotData.genes[0].geneName.value}}</b>
+          </p>
+          <p>
+            <b>Synonyms: <span class="text-secondary" *ngFor="let g of uniprotData.genes[0].synonyms">{{g.value}} </span></b>
+          </p>
+          <p>
+            <b>Secondary Accessions: <span *ngFor="let a of uniprotData.secondaryAccessions" class="text-secondary">{{a}} </span></b>
+          </p>
+          <p>
+            <span><b>Description:</b> {{uniprotData.proteinDescription.recommendedName.fullName.value}}</span>
+          </p>
+          <p>
+            <span><b>Organism:</b> {{uniprotData.organism.commonName}} ({{uniprotData.organism.scientificName}}) ({{uniprotData.organism.taxonId}})</span>
+          </p>
+          <p>
+            <span><b>Evidence level:</b> {{uniprotData.proteinExistence}}</span>
+          </p>
+          <p><b>Primary Sequence:</b></p>
+          <p>
+            <span style="overflow-wrap: break-word">{{uniprotData.sequence.value}}</span>
+          </p>
+        </div>
+      </div>
+
+    </div>
+    <div class="col-7" >
+      <div class="container" *ngIf="df.count() > 0">
+        <app-protein-scatter-plot [data]="df"></app-protein-scatter-plot>
+      </div>
+    </div>
+  </div>
+  <div class="card border-light">
+    <div class="card-body">
+      <h5 class="card-title">
+        Protein Features
+      </h5>
+      <div class="overflow-auto" style="height: 200px">
+        <table class="table table-sm table-striped">
+          <thead>
+          <tr>
+            <th scope="col">
+              Type
+            </th>
+            <th scope="col">
+              Location
+            </th>
+            <th scope="col">
+              Description
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let f of uniprotData.features">
+            <td>
+              {{f.type}}
+            </td>
+            <td>
+              {{f.location.start.value}} - {{f.location.end.value}}
+            </td>
+            <td>{{f.description}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid" *ngIf="df.count() > 0">
+  <app-data-viewer [data]="results"></app-data-viewer>
+</div>
+

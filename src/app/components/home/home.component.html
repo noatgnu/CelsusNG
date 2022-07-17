@@ -1,0 +1,7 @@
+<div class="container">
+  <app-search-data (result)="handleSearchResult($event)"></app-search-data>
+</div>
+
+<div class="container-fluid">
+  <app-data-viewer [data]="result"></app-data-viewer>
+</div>

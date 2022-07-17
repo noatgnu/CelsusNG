@@ -1,0 +1,351 @@
+<div class="container">
+  <div class="row">
+    <div class="col-4">
+      <span class="display-6"><b>Project Submission</b></span>
+    </div>
+    <div class="col-8">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Project Title</h5>
+          <input class="form-control" type="text" [(ngModel)]="project.title">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mt-2">
+    <div class="card-body">
+      <h5 class="card-title">Authorship</h5>
+      <div class="row">
+        <div class="col-3" *ngFor="let a of project.authors; let ind = index">
+          <div class="form-group">
+            <label>Author Name</label>
+            <input type="text" class="form-control" [(ngModel)]="project.authors[ind].name">
+          </div>
+          <div class="form-group">
+            <label>Author Contact Information</label>
+            <input type="text" class="form-control" [(ngModel)]="project.authors[ind].contact">
+          </div>
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" [(ngModel)]="project.authors[ind].first">
+            <label class="form-check-label">First author</label>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <button class="btn btn-sm btn-primary" (click)="addAuthor()">+</button>
+    </div>
+  </div>
+
+  <div class="card mt-2">
+    <div class="card-body">
+      <h5 class="card-title">Collaborators</h5>
+      <div class="row">
+        <div class="col-3" *ngFor="let a of project.collaborators; let ind = index">
+          <div class="form-group">
+            <label>Collaborator Name</label>
+            <input type="text" class="form-control" [(ngModel)]="project.collaborators[ind].name">
+          </div>
+          <div class="form-group">
+            <label>Collaborator Contact Information</label>
+            <input type="text" class="form-control" [(ngModel)]="project.collaborators[ind].contact">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <button class="btn btn-sm btn-primary" (click)="addCollaborator()">+</button>
+    </div>
+  </div>
+  <div class="card mt-2">
+    <div class="card-body">
+      <h5 class="card-title">PIs</h5>
+      <div class="row">
+        <div class="col-3" *ngFor="let a of project.pis; let ind = index">
+          <div class="form-group">
+            <label>PI Name</label>
+            <input type="text" class="form-control" [(ngModel)]="project.pis[ind].name">
+          </div>
+          <div class="form-group">
+            <label>PI Contact Information</label>
+            <input type="text" class="form-control" [(ngModel)]="project.pis[ind].contact">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <button class="btn btn-sm btn-primary" (click)="addPI()">+</button>
+    </div>
+  </div>
+  <div class="card mt-2">
+    <div class="card-body">
+      <h5 class="card-title">Additional data</h5>
+      <div class="row">
+        <div class="col-3">
+          <label for="experimentType">Experiment Types</label>
+          <select id="experimentType" class="form-control" [(ngModel)]="project.experimentType">
+            <option *ngFor="let o of experimentTypes" [value]="o">
+              {{o}}
+            </option>
+          </select>
+        </div>
+        <div class="col-3">
+          <label for="keywords">Keywords</label>
+          <div class="row">
+            <div class="col-8">
+              <input id="keywords" #keywords type="text" class="form-control" [(ngModel)]="project.keywords[0].name">
+              <small><span class="badge bg-danger" style="margin-left: 2px" *ngFor="let o of project.keywords; let ind = index" (click)="removeValue(ind, 'keywords')">{{o.name}}</span></small>
+            </div>
+            <div class="col-1">
+              <button class="btn btn-sm btn-primary mt-1" (click)="addValue(keywords.value, 'keywords')">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-3">
+          <label for="instruments">Instruments</label>
+          <div class="row">
+            <div class="col-8">
+              <input id="instruments" #instruments type="text" class="form-control" [(ngModel)]="project.instruments[0].name">
+              <small><span class="badge bg-danger" style="margin-left: 2px"  *ngFor="let o of project.instruments; let ind = index" (click)="removeValue(ind, 'instruments')">{{o.name}}</span></small>
+            </div>
+            <div class="col-1">
+              <button class="btn btn-sm btn-primary mt-1" (click)="addValue(instruments.value, 'instruments')">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-3">
+          <label for="quantificationMethods">Quantification Methods</label>
+          <div class="row">
+            <div class="col-8">
+              <input id="quantificationMethods" #quantificationMethods type="text" class="form-control" [(ngModel)]="project.quantificationMethods[0].name">
+              <small><span class="badge bg-danger" style="margin-left: 2px"  *ngFor="let o of project.quantificationMethods; let ind = index" (click)="removeValue(ind, 'quantificationMethods')">{{o.name}}</span></small>
+            </div>
+            <div class="col-1">
+              <button class="btn btn-sm btn-primary mt-1" (click)="addValue(quantificationMethods.value, 'quantificationMethods')">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-3">
+          <label for="organisms">Organisms</label>
+          <div class="row">
+            <div class="col-8">
+              <input id="organisms" #organisms type="text" class="form-control" [(ngModel)]="project.organisms[0].name">
+              <small><span class="badge bg-danger" style="margin-left: 2px"  *ngFor="let o of project.organisms; let ind = index" (click)="removeValue(ind, 'organisms')">{{o.name}}</span></small>
+            </div>
+            <div class="col-1">
+              <button class="btn btn-sm btn-primary mt-1" (click)="addValue(organisms.value, 'organisms')">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-3">
+          <label for="tissues">Tissues</label>
+          <div class="row">
+            <div class="col-8">
+              <input id="tissues" #tissues type="text" class="form-control" [(ngModel)]="project.tissues[0].name">
+              <small><span class="badge bg-danger" style="margin-left: 2px" *ngFor="let o of project.tissues; let ind = index" (click)="removeValue(ind, 'tissues')">{{o.name}}</span></small>
+            </div>
+            <div class="col-1">
+              <button class="btn btn-sm btn-primary mt-1" (click)="addValue(tissues.value, 'tissues')">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-3">
+          <label for="cellTypes">Cell Types</label>
+          <div class="row">
+            <div class="col-8">
+              <input id="cellTypes" #cellTypes type="text" class="form-control" [(ngModel)]="project.cellTypes[0].name">
+              <small><span class="badge bg-danger" style="margin-left: 2px" *ngFor="let o of project.cellTypes; let ind = index" (click)="removeValue(ind, 'cellTypes')">{{o.name}}</span></small>
+            </div>
+            <div class="col-1">
+              <button class="btn btn-sm btn-primary mt-1" (click)="addValue(cellTypes.value, 'cellTypes')">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-3">
+          <label for="diseases">Diseases</label>
+          <div class="row">
+            <div class="col-8">
+              <input id="diseases" #diseases type="text" class="form-control" [(ngModel)]="project.diseases[0].name">
+              <small><span class="badge bg-danger" style="margin-left: 2px" *ngFor="let o of project.diseases; let ind = index" (click)="removeValue(ind, 'diseases')">{{o.name}}</span></small>
+            </div>
+            <div class="col-1">
+              <button class="btn btn-sm btn-primary mt-1" (click)="addValue(diseases.value, 'diseases')">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-3">
+          <div class="row">
+            <label>Project start date</label>
+          </div>
+          <ngb-datepicker [(ngModel)]="project.date"></ngb-datepicker>
+        </div>
+        <div class="col-3">
+          <div class="form-group">
+            <label>Database Version</label>
+            <input type="text" class="form-control" [(ngModel)]="project.databaseVersion">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mt-2">
+    <div class="card-body">
+      <h5 class="card-title">Description</h5>
+      <quill-editor [(ngModel)]="project.description"></quill-editor>
+    </div>
+  </div>
+  <div class="card mt-2">
+    <div class="card-body">
+      <h5 class="card-title">Sample Processing Protocol</h5>
+      <quill-editor [(ngModel)]="project.sampleProcessingProtocol"></quill-editor>
+    </div>
+  </div>
+  <div class="card mt-2">
+    <div class="card-body">
+      <h5 class="card-title">Data Processing Protocol</h5>
+      <quill-editor [(ngModel)]="project.dataProcessingProtocol"></quill-editor>
+    </div>
+  </div>
+
+  <div class="card mt-2">
+    <div class="card-body">
+      <h5 class="card-title">Sample Annotation</h5>
+      <table class="table table-sm">
+        <thead>
+        <tr>
+          <th scope="col">
+            Sample Name
+          </th>
+          <th scope="col">
+            Sample Description
+          </th>
+          <th scope="col">
+
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let r of project.sampleAnnotations; let ind = index">
+          <td><input class="form-control" [(ngModel)]="project.sampleAnnotations[ind].name"></td>
+          <td><textarea class="form-control" [(ngModel)]="project.sampleAnnotations[ind].description"></textarea></td>
+          <td><button class="btn btn-sm btn-danger" (click)="removeValue(ind, 'sampleAnnotation')">X</button></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card-footer">
+      <button class="btn btn-sm btn-primary" (click)="addSample()">+</button>
+    </div>
+  </div>
+
+  <div class="card mt-2">
+    <div class="card-body">
+      <h5 class="card-title">Upload Files</h5>
+      <div class="row">
+        <div class="col-6" *ngFor="let f of project.files; let ind = index">
+          <div class="form-group">
+            <label>File type</label>
+            <select class="form-control" [(ngModel)]="project.files[ind].fileType">
+              <option *ngFor="let t of fileTypes" [value]="t">{{t}}</option>
+            </select>
+          </div>
+          <ng-container *ngIf="f.fileType !== ''">
+            <input type="file" class="form-control mt-2" (change)="handleFile($event, ind)">
+            <ng-container *ngIf="dfMap[project.files[ind].name]!== undefined">
+              <div class="form-group" *ngIf="project.files[ind].fileType == fileTypes[0]">
+                <label>Select Sample Columns</label>
+                <select class="form-control" [(ngModel)]="selectedCols[f.name]" multiple>
+                  <option *ngFor="let c of dfMap[f.name].getColumnNames()" [value]="c">
+                    {{c}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group" *ngIf="project.files[ind].fileType == fileTypes[0] || project.files[ind].fileType == fileTypes[1]">
+                <label>Select Primary ID Column</label>
+                <select class="form-control" [(ngModel)]="primaryIDCols[f.name]">
+                  <option *ngFor="let c of dfMap[f.name].getColumnNames()" [value]="c">
+                    {{c}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group" *ngIf="project.files[ind].fileType == fileTypes[1]">
+                <label>Select Fold Change Columns</label>
+                <select class="form-control" [(ngModel)]="fcCols[f.name]" multiple (change)="createComparison(f.name)">
+                  <option *ngFor="let c of dfMap[f.name].getColumnNames()" [value]="c">
+                    {{c}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="form-group" *ngIf="project.files[ind].fileType == fileTypes[1]" >
+                <label>Select Significant Columns</label>
+                <select class="form-control" [(ngModel)]="significantCols[f.name]" multiple>
+                  <option *ngFor="let c of dfMap[f.name].getColumnNames()" [value]="c">
+                    {{c}}
+                  </option>
+                </select>
+              </div>
+              <ng-container *ngIf="project.files[ind].fileType == fileTypes[1]">
+                <div class="row" *ngFor="let c of comparisons; let i = index">
+                  <div class="col-4">
+                    <label>Comparison Name</label>
+                    <input class="form-control" type="text" [(ngModel)]="comparisons[i].name">
+                  </div>
+                  <div class="col-4">
+                    <label>Fold Change Column</label>
+                    <select class="form-control" [(ngModel)]="comparisons[i].fc">
+                      <option *ngFor="let s of fcCols[f.name]" [value]="s">
+                        {{s}}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-4">
+                    <label>Significant Column</label>
+                    <select class="form-control" [(ngModel)]="comparisons[i].significant">
+                      <option *ngFor="let s of significantCols[f.name]" [value]="s">
+                        {{s}}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+              </ng-container>
+
+            </ng-container>
+
+          </ng-container>
+          <div class="mt-2">
+            <ngb-progressbar *ngIf="progress[project.files[ind].name]" type="info" [value]="progress[project.files[ind].name]" [animated]="true" [striped]="true">
+              <span *ngIf="progress[project.files[ind].name]===100">Completed</span>
+            </ngb-progressbar>
+          </div>
+          <div class="mt-2">
+            <button class="btn btn-sm btn-danger" (click)="removeValue(ind, 'files')">X</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-footer">
+      <button class="btn btn-sm btn-primary" (click)="addFile()">+</button>
+    </div>
+  </div>
+
+  <div class="row mt-2">
+    <div class="col-2">
+      <button class="btn btn-primary" (click)="submit()">Submit</button>
+    </div>
+    <div class="col-10">
+      <a class="text-link" href="{{web.hostURL}}/api/project/{{web.uniqueID}}"></a>
+    </div>
+  </div>
+</div>
+

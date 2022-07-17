@@ -1,0 +1,177 @@
+<div *ngIf="finished">
+  <div class="container">
+    <span class="display-6">{{project.title}}</span>
+    <div class="row">
+      <div class="col-4">
+        <b class="display-7">Authors</b>
+        <ul>
+          <li *ngFor="let a of project.authors" [ngClass]="{'text-primary': a.first}">{{a.name}}, {{a.contact}}</li>
+        </ul>
+      </div>
+      <div class="col-4">
+        <b class="display-7">Collaborators</b>
+        <ul>
+          <li *ngFor="let a of project.collaborators">{{a.name}}, {{a.contact}}</li>
+        </ul>
+      </div>
+      <div class="col-4">
+        <b class="display-7">PIs</b>
+        <ul>
+          <li *ngFor="let a of project.pis">{{a.name}}, {{a.contact}}</li>
+        </ul>
+      </div>
+      <div class="col-8">
+        <b class="display-7">Description</b>
+        <quill-view-html [content]="project.description"></quill-view-html>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-4">
+        <b class="display-7">Organisms</b>
+        <ul>
+          <li *ngFor="let a of project.organisms">{{a.name}}</li>
+        </ul>
+      </div>
+      <div class="col-4">
+        <b class="display-7">Tissues</b>
+        <ul>
+          <li *ngFor="let a of project.tissues">{{a.name}}</li>
+        </ul>
+      </div>
+      <div class="col-4">
+        <b class="display-7">Cell Types</b>
+        <ul>
+          <li *ngFor="let a of project.cellTypes">{{a.name}}</li>
+        </ul>
+      </div>
+      <div class="col-4">
+        <b class="display-7">Diseases</b>
+        <ul>
+          <li *ngFor="let a of project.diseases">{{a.name}}</li>
+        </ul>
+      </div>
+      <div class="col-4">
+        <b class="display-7">Experiment Type</b>
+        <p>{{project.experimentType}}</p>
+      </div>
+      <div class="col-4">
+        <b class="display-7">Quantification Methods</b>
+        <ul>
+          <li *ngFor="let a of project.quantificationMethods">{{a.name}}</li>
+        </ul>
+      </div>
+      <div class="col-4">
+        <b class="display-7">Database Version</b>
+        <p>{{project.databaseVersion}}</p>
+      </div>
+    </div>
+    <div class="mt-2">
+      <b class="display-7">Sample Processing Method</b>
+      <quill-view-html [content]="project.sampleProcessingProtocol"></quill-view-html>
+    </div>
+
+    <div class="mt-2">
+      <b class="display-7">Data Processing Method</b>
+      <quill-view-html [content]="project.dataProcessingProtocol"></quill-view-html>
+    </div>
+
+    <div class="mt-2">
+      <div class="row">
+        <div class="col-4">
+          <b class="display-7">
+            Associated Files
+          </b>
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th scope="col">
+                File type
+              </th>
+              <th scope="col">
+                File name
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let f of project.files">
+              <td>{{f.fileType}}</td>
+              <td><a href="{{web.hostURL}}/api/file/{{project.id}}/{{f.name}}/" target="_blank">{{f.name}}</a></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-8">
+          <b class="display-7">Comparisons</b>
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th scope="col">
+                Name
+              </th>
+              <th scope="col">
+                Specified Fold Change Column
+              </th>
+              <th scope="col">
+                Specified Significant Column
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let c of project.comparison">
+              <td>
+                {{c.name}}
+              </td>
+              <td>
+                {{c.fcColumn}}
+              </td>
+              <td>
+                {{c.significantColumn}}
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-2">
+      <b class="display-7">Sample Annotations</b>
+      <table class="table table-striped">
+        <thead>
+        <tr>
+          <th scope="col">
+            Sample column name
+          </th>
+          <th scope="col">
+            Sample description
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let s of project.sampleAnnotations">
+          <td>{{s.name}}</td>
+          <td>{{s.description}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-2">
+      <b class="display-9">Keywords</b>
+      <ul>
+        <li *ngFor="let k of project.keywords">
+          {{k.name}}
+        </li>
+      </ul>
+    </div>
+    <div class="container" *ngIf="results.length > 0">
+      <app-protein-scatter-plot [data]="df"></app-protein-scatter-plot>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="finished">
+  <div class="container-fluid">
+    <app-data-viewer [ignoreAvailability]="true" [data]="results" [project_id]="project.id"></app-data-viewer>
+  </div>
+</div>

@@ -1,0 +1,163 @@
+<div class="modal-header">
+  <b class="modal-title display-6">Project Files Editor</b>
+</div>
+<div class="modal-body" *ngIf="finished">
+  <ng-container *ngFor="let f of project.files; let ind = index">
+    <ng-container *ngIf="f.id; else fileUpload">
+      <div class="card">
+        <div class="card-body">
+          <p>Filename: <a href="{{web.hostURL}}/api/file/{{project.id}}/{{f.name}}/" target="_blank">{{f.name}}</a></p>
+          <p>File type: <span class="text-success">{{f.fileType}}</span></p>
+        </div>
+        <div class="card-footer">
+          <div class="row">
+            <div class="col-2">
+              <button class="btn btn-sm btn-danger ml-2" (click)="removeValue(ind, 'files')">Remove</button>
+            </div>
+            <div class="col-2">
+<!--              <button class="btn btn-sm btn-primary mr-2" (click)="startEdit(ind)">Edit</button>-->
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card mt-2" *ngIf="editPanelShow[f.id.toString()]===true">
+        <div class="card-body">
+          <b>Edit {{f.name}}</b>
+          <ng-container *ngIf="f.sampleColumns.length > 0">
+            <div class="form-group">
+              <label>Primary ID Column:</label>
+              <select [(ngModel)]="sampleColumnMap[f.id.toString()]['primaryID'][0]" class="form-control">
+                <option *ngFor="let o of columnsMap[f.id.toString()]" [value]="o">{{o}}</option>
+              </select>
+            </div>
+            <!--<div class="form-group" *ngIf="sampleColumnMap[f.id.toString()]['foldChange']">
+              <label>Fold Change Columns:</label>
+              <select multiple [(ngModel)]="sampleColumnMap[f.id.toString()]['foldChange']" class="form-control">
+                <option *ngFor="let o of columnsMap[f.id.toString()]" [value]="o">{{o}}</option>
+              </select>
+            </div>
+            <div class="form-group" *ngIf="sampleColumnMap[f.id.toString()]['foldChange']">
+              <label>Significant Columns:</label>
+              <select multiple [(ngModel)]="sampleColumnMap[f.id.toString()]['significant']" class="form-control">
+                <option *ngFor="let o of columnsMap[f.id.toString()]" [value]="o">{{o}}</option>
+              </select>
+            </div>-->
+          </ng-container>
+          <ng-container *ngIf="sampleColumnMap[f.id.toString()]['foldChange'].length >0">
+            <div class="row" *ngFor="let i of comparisonIDListMap[f.id.toString()]">
+              <div class="col-4">
+                <label>Comparison Name</label>
+                <input type="text" class="form-control" [(ngModel)]="comparisonMap[f.id.toString()][i].name">
+              </div>
+              <div class="col-4">
+                <label>Fold Change Column</label>
+                <select class="form-control" [(ngModel)]="comparisonMap[f.id.toString()][i].fcColumn">
+                  <option *ngFor="let o of columnsMap[f.id.toString()]" [value]="o">{{o}}</option>
+                </select>
+              </div>
+              <div class="col-4">
+                <label>Significant Column</label>
+                <select class="form-control" [(ngModel)]="comparisonMap[f.id.toString()][i].significantColumn">
+                  <option *ngFor="let o of columnsMap[f.id.toString()]" [value]="o">{{o}}</option>
+                </select>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </ng-container>
+    <ng-template #fileUpload>
+      <div class="card mt-2">
+        <div class="card-body">
+          <h5 class="card-title">Upload Files</h5>
+          <div class="row">
+            <div class="form-group">
+              <label>File type</label>
+              <select class="form-control" [(ngModel)]="project.files[ind].fileType">
+                <option *ngFor="let t of fileTypes" [value]="t">{{t}}</option>
+              </select>
+            </div>
+            <ng-container *ngIf="f.fileType !== ''">
+              <input type="file" class="form-control mt-2" (change)="handleFile($event, ind)">
+              <ng-container *ngIf="dfMap[project.files[ind].name]!== undefined">
+                <div class="form-group" *ngIf="project.files[ind].fileType == fileTypes[0]">
+                  <label>Select Sample Columns</label>
+                  <select class="form-control" [(ngModel)]="selectedCols[f.name]" multiple>
+                    <option *ngFor="let c of dfMap[f.name].getColumnNames()" [value]="c">
+                      {{c}}
+                    </option>
+                  </select>
+                </div>
+
+                <div class="form-group" *ngIf="project.files[ind].fileType == fileTypes[0] || project.files[ind].fileType == fileTypes[1]">
+                  <label>Select Primary ID Column</label>
+                  <select class="form-control" [(ngModel)]="primaryIDCols[f.name]">
+                    <option *ngFor="let c of dfMap[f.name].getColumnNames()" [value]="c">
+                      {{c}}
+                    </option>
+                  </select>
+                </div>
+
+                <div class="form-group" *ngIf="project.files[ind].fileType == fileTypes[1]">
+                  <label>Select Fold Change Columns</label>
+                  <select class="form-control" [(ngModel)]="fcCols[f.name]" multiple (change)="createComparison(f.name)">
+                    <option *ngFor="let c of dfMap[f.name].getColumnNames()" [value]="c">
+                      {{c}}
+                    </option>
+                  </select>
+                </div>
+
+                <div class="form-group" *ngIf="project.files[ind].fileType == fileTypes[1]" >
+                  <label>Select Significant Columns</label>
+                  <select class="form-control" [(ngModel)]="significantCols[f.name]" multiple>
+                    <option *ngFor="let c of dfMap[f.name].getColumnNames()" [value]="c">
+                      {{c}}
+                    </option>
+                  </select>
+                </div>
+
+                <div class="row" *ngFor="let c of fcCols[f.name]; let i = index">
+                  <div class="col-4">
+                    <label>Comparison Name</label>
+                    <input class="form-control" type="text" [(ngModel)]="comparisons[i].name">
+                  </div>
+                  <div class="col-4">
+                    <label>Fold Change Column</label>
+                    <select class="form-control" [(ngModel)]="comparisons[i].fc">
+                      <option *ngFor="let s of fcCols[f.name]" [value]="s">
+                        {{s}}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-4">
+                    <label>Significant Column</label>
+                    <select class="form-control" [(ngModel)]="comparisons[i].significant">
+                      <option *ngFor="let s of significantCols[f.name]" [value]="s">
+                        {{s}}
+                      </option>
+                    </select>
+                  </div>
+
+                </div>
+              </ng-container>
+
+            </ng-container>
+            <div class="mt-2">
+              <ngb-progressbar *ngIf="progress[project.files[ind].name]" type="info" [value]="progress[project.files[ind].name]" [animated]="true" [striped]="true">
+                <span *ngIf="progress[project.files[ind].name]===100">Completed</span>
+              </ngb-progressbar>
+            </div>
+            <div class="mt-2">
+              <button class="btn btn-sm btn-danger" (click)="removeValue(ind, 'files')">X</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </ng-container>
+  <button class="btn btn-sm btn-primary mt-2" (click)="addFile()">Add File</button>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary" (click)="submitUpdate()">Submit</button>
+  <button class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+</div>

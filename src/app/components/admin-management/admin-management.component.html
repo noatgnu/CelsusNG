@@ -1,0 +1,86 @@
+<div class="container" *ngIf="web.access_token === ''">
+  <app-login (loginEvent)="logged($event)"></app-login>
+</div>
+
+<ng-container *ngIf="data.adminProjects.length > 0">
+  <div class="container">
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div>
+            <b class="display-8"></b>
+            <ngb-pagination [collectionSize]="totalCount" [maxSize]="5" [rotate]="true" (pageChange)="updateViewer($event)" [(page)]="currentPage" [boundaryLinks]="true" [pageSize]="pageSize"></ngb-pagination>
+            <table class="table table-hover">
+              <thead>
+              <tr>
+                <th scope="col">
+                  # ID
+                </th>
+                <th scope="col">
+                  Title
+                </th>
+                <th scope="col">
+                  Authors
+                </th>
+                <th scope="col">
+                  Experiment Type
+                </th>
+                <th scope="col">
+                  Organisms
+                </th>
+                <th scope="col">
+                  Tissues
+                </th>
+                <th scope="col">
+                  Instruments
+                </th>
+                <th scope="col">
+                  Cell Types
+                </th>
+                <th scope="col">
+                  Visibility in search
+                </th>
+                <th scope="col"></th>
+              </tr>
+              </thead>
+              <tr *ngFor="let d of data.adminProjects">
+                <td>
+                  <a target="_blank" href="#/project/{{d.id}}">{{d.id}}</a>
+                </td>
+                <td>
+                  {{d.title}}
+                </td>
+                <td>
+                  <span *ngFor="let a of d.authors">{{a.name}},</span>
+                </td>
+                <td>
+                  {{d.experimentType}}
+                </td>
+                <td>
+                  <span *ngFor="let a of d.organisms">{{a.name}},</span>
+                </td>
+                <td>
+                  <span *ngFor="let a of d.tissues">{{a.name}},</span>
+                </td>
+                <td>
+                  <span *ngFor="let a of d.instruments">{{a.name}},</span>
+                </td>
+                <td>
+                  <span *ngFor="let a of d.cellTypes">{{a.name}},</span>
+                </td>
+                <td class="text-center">
+                  <input type="checkbox" class="form-check-input" [(ngModel)]="d.enable" (change)="update(d, ['enable'])">
+                </td>
+                <td>
+                  <button class="btn btn-sm btn-link" (click)="editProject(d.id)">Edit Project</button>
+                  <button class="btn btn-sm btn-link" (click)="editProjectFile(d.id)">Edit Project Files</button>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</ng-container>
