@@ -15,13 +15,12 @@ export class AdminManagementComponent implements OnInit {
   pageSize: number = 20
   totalCount: number = 1
   totalPages: number = 1
+  searchText: string = ""
   constructor(public web: WebService, public data: DataService, private modal: NgbModal) {
     if (this.web.access_token !== "") {
-      this.web.adminGetProjects(1).subscribe(data => {
-
+      this.web.adminGetProjects(1, this.searchText).subscribe(data => {
         // @ts-ignore
         if (data["results"]) {
-          console.log(data)
           // @ts-ignore
           this.data.adminProjects = data["results"]
           // @ts-ignore
@@ -53,10 +52,9 @@ export class AdminManagementComponent implements OnInit {
   }
 
   updateViewer(e: number) {
-    this.web.adminGetProjects(e).subscribe(data => {
+    this.web.adminGetProjects(e, this.searchText).subscribe(data => {
       // @ts-ignore
       if (data["results"]) {
-        console.log(data)
         // @ts-ignore
         this.data.adminProjects = data["results"]
         // @ts-ignore

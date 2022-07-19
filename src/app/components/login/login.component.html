@@ -1,17 +1,7 @@
 <ng-container>
-  <div class="row">
-    <div class="col-3">
-      <label for="username">
-        Username
-      </label>
-      <input id="username" [(ngModel)]="web.username" class="form-control" type="text">
-    </div>
-    <div class="col-3">
-      <label for="password">
-        Password
-      </label>
-      <input id="password" [(ngModel)]="web.password" class="form-control" type="password">
-    </div>
+  <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+    <input id="username" [(ngModel)]="web.username" class="form-control form-control-sm" type="text" placeholder="Username" style="max-width: 200px">
+    <input id="password" [(ngModel)]="web.password" class="form-control form-control-sm" type="password" placeholder="Password" style="max-width: 200px">
   </div>
-  <button class="btn btn-primary mt-2" (click)="login()">Submit</button>
+  <button class="btn btn-sm btn-primary mt-2" (click)="login()">Login</button>
 </ng-container>

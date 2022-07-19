@@ -11,6 +11,10 @@
       <label>Significant cutoff</label>
       <input class="form-control" type="number" [(ngModel)]="significantCutoff">
     </div>
+    <div class="form-check">
+      <input type="checkbox" id="backgroundGrey" class="form-check-label" [(ngModel)]="background">
+      <label for="backgroundGrey">Set background data point grey color</label>
+    </div>
     <button class="btn btn-primary mt-2" (click)="draw()">Redraw Plot</button>
   </div>
 </div>

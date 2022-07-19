@@ -25,6 +25,8 @@ import { PlotlyModule } from 'angular-plotly.js';
 import { ProteinScatterPlotComponent } from './components/protein-scatter-plot/protein-scatter-plot.component';
 import { RawDataModalComponent } from './components/raw-data-modal/raw-data-modal.component';
 import { RawDataBarChartComponent } from './components/raw-data-bar-chart/raw-data-bar-chart.component';
+import { LatestProjectComponent } from './components/latest-project/latest-project.component';
+import { RemovalConfirmationModalComponent } from './components/removal-confirmation-modal/removal-confirmation-modal.component';
 
 PlotlyModule.plotlyjs = PlotlyJS;
 @NgModule({
@@ -44,7 +46,9 @@ PlotlyModule.plotlyjs = PlotlyJS;
     ProteinViewerComponent,
     ProteinScatterPlotComponent,
     RawDataModalComponent,
-    RawDataBarChartComponent
+    RawDataBarChartComponent,
+    LatestProjectComponent,
+    RemovalConfirmationModalComponent
   ],
   imports: [
     BrowserModule,

@@ -1,11 +1,10 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DataFrame, IDataFrame} from "data-forge";
 import {WebService} from "../../service/web.service";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {ProjectModalComponent} from "../project-modal/project-modal.component";
 import {DataService} from "../../service/data.service";
 import {RawDataModalComponent} from "../raw-data-modal/raw-data-modal.component";
-import {FilterSearch} from "../../classes/filter-search";
 
 @Component({
   selector: 'app-data-viewer',
@@ -34,10 +33,12 @@ export class DataViewerComponent implements OnInit {
   }
   currentPage = 1
   per_page = 20
+
+  @Output() selected: EventEmitter<any> = new EventEmitter<any>()
+
   @Input() project_id: number = 0
   @Input() ignoreAvailability: boolean = false
   @Input() set data(value: any[]) {
-    console.log(this.ignoreAvailability)
     this._data = new DataFrame(value)
     this.filterToggleMap = {"project_id": {"activeFilter": 0}, "primary_id": {"activeFilter": 0}, "comparison_id": {"activeFilter": 0}, "gene_names": {"activeFilter": 0}}
     this.currentPage = 1
@@ -111,6 +112,8 @@ export class DataViewerComponent implements OnInit {
       }*/
     }
 
+    this.selected.emit(this.filter)
+
     this.web.searchDifferentialAnalysis([],1,20,"filter",this.filter, this.ignoreAvailability).subscribe(data => {
       data = data.replace(/NaN/g, "null")
       const res = JSON.parse(data)
@@ -158,7 +161,6 @@ export class DataViewerComponent implements OnInit {
   }
 
   filterSearch(term: string, source: string) {
-    console.log(term)
     if (term !== "") {
       const match = new RegExp(term, "mi").test(source)
       return match
@@ -166,5 +168,17 @@ export class DataViewerComponent implements OnInit {
       return true
     }
 
+  }
+
+  downloadDifferentialAnalysis() {
+    this.web.searchDifferentialAnalysis([], 1,20,"filter",this.filter, this.ignoreAvailability, false, "txt").subscribe(data => {
+      const res = data.replace(/NaN/g, "null")
+      const body = JSON.parse(res)
+      // @ts-ignore
+      if (body["download-token"]) {
+        // @ts-ignore
+        window.open(this.web.hostURL + "/api/download/" + body["download-token"] + "/", "_blank")
+      }
+    })
   }
 }

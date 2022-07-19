@@ -17,13 +17,26 @@ export class ProteinScatterPlotComponent implements OnInit {
     height: 600, width: 600, xaxis: {title: "Log2FC"}, yaxis: {title: "-log10(p-value)"},
     title: "Differential Analysis Data Distribution", annotations: []
   }
-
+  background: boolean = true
+  backgroundColor: string = "#EEEEEE"
   fcCutoff = 0.6
   significantCutoff = 0.05
+  private _externalSelectionFilter: any = {
+    "comparison_id": [],
+    "primary_id": [],
+    "project_id": [],
+    "gene_names": []
+  }
+  @Input() set externalSelectionFilter(value: any) {
+    this._externalSelectionFilter = value
+    this.draw()
+  }
+  get externalSelectionFilter(): any {
+    return this._externalSelectionFilter
+  }
 
   @Input() set data(value: IDataFrame) {
     this._data = value
-    console.log(value)
     this.draw();
   }
 
@@ -38,13 +51,24 @@ export class ProteinScatterPlotComponent implements OnInit {
     this.layoutMaxMin.yMax = -Math.log10(this._data.getSeries("significant").min())
     this.graphLayout.xaxis.range =
       [this.layoutMaxMin.xMin - 0.5, this.layoutMaxMin.xMax + 0.5]
-    console.log(this.layoutMaxMin)
+
     this.graphLayout.yaxis.range =
       [0,  this.layoutMaxMin.yMax + this.layoutMaxMin.yMin*2]
-    console.log(this.graphLayout)
+
     const temp: any = {}
     for (const r of this._data) {
-      const group = this.significantGroup(r["foldChange"], r["significant"])
+      const comparison = this.dataService.comparisonMap[r["comparison_id"].toString()]
+      let group = ""
+      if (
+        this.externalSelectionFilter["primary_id"].includes(r["primary_id"])||
+        this.externalSelectionFilter["gene_names"].includes(r["gene_names"])||
+        this.externalSelectionFilter["comparison_id"].includes(r["comparison_id"])||
+        this.externalSelectionFilter["project_id"].includes(comparison["project_id"])
+      ) {
+        group = r["gene_names"]
+      } else {
+        group = this.significantGroup(r["foldChange"], r["significant"], this.background)
+      }
       if (!temp[group]) {
         temp[group] = {
           x: [],
@@ -54,10 +78,15 @@ export class ProteinScatterPlotComponent implements OnInit {
           mode: "markers",
           name: group
         }
+        if (group === "background") {
+          temp[group].marker = {
+            color: this.backgroundColor
+          }
+        }
       }
       temp[group].x.push(r["foldChange"])
       temp[group].y.push(-Math.log10(r["significant"]))
-      const comparison = this.dataService.comparisonMap[r["comparison_id"].toString()]
+
       if (this.dataService.projects[comparison.project_id.toString()]) {
         temp[group].text.push(
           this.dataService.projects[comparison.project_id.toString()].title + "-" + comparison.name + "-" + "(Project ID# " + comparison.project_id + ")")
@@ -71,7 +100,6 @@ export class ProteinScatterPlotComponent implements OnInit {
     }
     this.drawCutoffShape()
     this.graphData = graph
-    console.log(this.graphLayout)
   }
 
   drawCutoffShape() {
@@ -126,18 +154,24 @@ export class ProteinScatterPlotComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  significantGroup(x: number, y: number) {
+  significantGroup(x: number, y: number, returnBackground: boolean = false) {
     const ylog = this.significantCutoff
     const groups: string[] = []
     if (ylog > y) {
       groups.push("P-value < " + this.significantCutoff)
     } else {
+      if (returnBackground){
+        return "background"
+      }
       groups.push("P-value >= " + this.significantCutoff)
     }
 
     if (Math.abs(x) > this.fcCutoff) {
       groups.push("FC > " + this.fcCutoff)
     } else {
+      if (returnBackground){
+        return "background"
+      }
       groups.push("FC <= " + this.fcCutoff)
     }
 

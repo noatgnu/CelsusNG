@@ -20,7 +20,7 @@ export class WebService {
     return this.http.post(this.hostURL + "/api/project/", JSON.stringify(project), {responseType: "json", observe: "body"})
   }
 
-  searchDifferentialAnalysis(term: string[] = [], page: number = 1, per_page: number = 20, type: string = "initial search", filter: any = {}, ignoreAvailability: boolean = false, all:boolean = false) {
+  searchDifferentialAnalysis(term: string[] = [], page: number = 1, per_page: number = 20, type: string = "initial search", filter: any = {}, ignoreAvailability: boolean = false, all:boolean = false, format: string = "json") {
     if (type !== "initial search") {
       if (term.length == 0) {
         term = this.justSearched.slice()
@@ -28,7 +28,7 @@ export class WebService {
     } else {
       this.justSearched = term.slice()
     }
-    return this.http.post(this.hostURL + "/api/search/", JSON.stringify({"term": term, "page": page, "per_page": per_page, "type": type, "filter": filter, "ignoreAvailability": ignoreAvailability, "all": all}), {responseType: "text", observe: "body"})
+    return this.http.post(this.hostURL + "/api/search/", JSON.stringify({"term": term, "page": page, "per_page": per_page, "type": type, "filter": filter, "ignoreAvailability": ignoreAvailability, "all": all, format: format}), {responseType: "text", observe: "body"})
   }
 
   getProjects(ids: string[]) {
@@ -61,9 +61,9 @@ export class WebService {
     return this.http.post(this.hostURL + "/api/admin/check/", {username, access_token: this.access_token}, {responseType: "json", observe: "response"})
   }
 
-  adminGetProjects(page: number) {
+  adminGetProjects(page: number, term: string = "") {
     const headers = new HttpHeaders().set("Access-Token", this.access_token)
-    return this.http.post(this.hostURL + "/api/admin/", {username: this.username, page, per_page: 20, type: "project"}, {responseType: "json", observe: "body", headers: headers})
+    return this.http.post(this.hostURL + "/api/admin/", {username: this.username, page, per_page: 20, type: "project", term: term}, {responseType: "json", observe: "body", headers: headers})
   }
 
   adminUpdateProject(project: any, updateProperties: string[]) {

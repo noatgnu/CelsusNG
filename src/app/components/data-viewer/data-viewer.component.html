@@ -1,131 +1,145 @@
-<div class="row mt-2" *ngIf="displayDF.count() > 0; else noresult">
-  <div class="col-2">
-    <div class="card" *ngIf="dataService.projectIDs.length > 0">
-      <div class="card-body">
-        <div>
-          <b>Projects ({{dataService.projectIDs.length}})</b>
-          <input type="text" class="form-control form-control-sm" placeholder="Filter project name" [(ngModel)]="projectNameFilterModel">
-          <ng-container *ngFor="let p of dataService.projectIDs">
-            <div class="form-check" *ngIf="dataService.projects[p] && filterSearch(projectNameFilterModel, dataService.projects[p].title)">
-              <input id="{{p}}project" type="checkbox" class="form-check-input" [(ngModel)]="filterToggleMap['project_id'][p]" (change)="updateFilter($event, 'project_id', p)">
-              <label for="{{p}}project" class="form-check-label">{{dataService.projects[p].title}}</label>
-            </div>
-          </ng-container>
-        </div>
-        <div>
-          <b>Comparison ({{dataService.comparisonIDs.length}})</b>
-          <input type="text" class="form-control form-control-sm" placeholder="Filter comparison name" [(ngModel)]="comparisonNameFilterModel">
-          <ng-container *ngFor="let p of dataService.comparisonIDs">
-            <div class="form-check" *ngIf="dataService.comparisonMap[p] && filterSearch(comparisonNameFilterModel, dataService.comparisonMap[p].name)">
-              <input id="{{p}}comparison-id" type="checkbox" class="form-check-input" [(ngModel)]="filterToggleMap['comparison_id'][p]" (change)="updateFilter($event, 'comparison_id', p)">
-              <label for="{{p}}comparison-id" class="form-check-label">{{dataService.comparisonMap[p].name}}</label>
-            </div>
-          </ng-container>
-        </div>
-        <div>
-          <b>Primary IDs ({{dataService.primaryIDs.length}})</b>
-          <input type="text" class="form-control form-control-sm" placeholder="Filter primary ids" [(ngModel)]="primaryIDFilterModel">
-          <ng-container *ngFor="let p of dataService.primaryIDs; let ind = index">
-            <div class="form-check" *ngIf="ind < 10 && filterSearch(primaryIDFilterModel, p)">
-              <input id="{{p}}primary-id" type="checkbox" class="form-check-input" [(ngModel)]="filterToggleMap['primary_id'][p]" (change)="updateFilter($event, 'primary_id', p)">
-              <label style="overflow-wrap: break-word" for="{{p}}primary-id" class="form-check-label">{{p}}<span></span></label>
-            </div>
-            <div class="form-check" *ngIf="ind >= 10 && expandView['primary_id']">
-              <input id="{{p}}primary-id" type="checkbox" class="form-check-input" [(ngModel)]="filterToggleMap['primary_id'][p]" (change)="updateFilter($event, 'primary_id', p)">
-              <label style="overflow-wrap: break-word" for="{{p}}primary-id" class="form-check-label">{{p}}<span></span></label>
-            </div>
-          </ng-container>
-          <button class="btn btn-sm btn-link" (click)="toggleView('primary_id')"><span *ngIf="expandView['primary_id'] === false">View all</span><span *ngIf="expandView['primary_id'] === true">Reduce view</span></button>
-        </div>
-        <div>
-          <b>Gene names ({{dataService.geneNames.length}})</b>
-          <input type="text" class="form-control form-control-sm" placeholder="Filter gene names" [(ngModel)]="geneNamesFilterModel">
-          <ng-container *ngFor="let p of dataService.geneNames; let ind = index">
-            <div class="form-check" *ngIf="ind < 10 && filterSearch(geneNamesFilterModel, p)">
-              <input id="{{p}}gene-names" type="checkbox" class="form-check-input" [(ngModel)]="filterToggleMap['gene_names'][p]" (change)="updateFilter($event, 'gene_names', p)">
-              <label for="{{p}}gene-names" class="form-check-label">{{p}}<span></span></label>
-            </div>
-            <div class="form-check" *ngIf="ind >= 10 && expandView['gene_names'] && filterSearch(geneNamesFilterModel, p)">
-              <input id="{{p}}gene-names" type="checkbox" class="form-check-input" [(ngModel)]="filterToggleMap['gene_names'][p]" (change)="updateFilter($event, 'gene_names', p)">
-              <label for="{{p}}gene-names" class="form-check-label">{{p}}<span></span></label>
-            </div>
-          </ng-container>
-          <button class="btn btn-sm btn-link" (click)="toggleView('gene_names')"><span *ngIf="expandView['gene_names'] === false">View all</span><span *ngIf="expandView['gene_names'] === true">Reduce view</span></button>
+<ng-container *ngIf="displayDF.count() > 0; else noresult">
+  <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-2">
+    <button class="btn btn-sm btn-primary" type="button" (click)="downloadDifferentialAnalysis()">Download</button>
+  </div>
+  <div class="row mt-2">
+    <div class="col-2">
+      <div class="card" *ngIf="dataService.projectIDs.length > 0">
+        <div class="card-body">
+          <div>
+            <b>Projects ({{dataService.projectIDs.length}})</b>
+            <input type="text" class="form-control form-control-sm" placeholder="Filter project name" [(ngModel)]="projectNameFilterModel">
+            <ng-container *ngFor="let p of dataService.projectIDs; let ind = index">
+              <div class="form-check" *ngIf="dataService.projects[p] && ind < 10 && filterSearch(projectNameFilterModel, dataService.projects[p].title)">
+                <input id="{{p}}project" type="checkbox" class="form-check-input" [(ngModel)]="filterToggleMap['project_id'][p]" (change)="updateFilter($event, 'project_id', p)">
+                <label for="{{p}}project" class="form-check-label">{{dataService.projects[p].title}}</label>
+              </div>
+              <div class="form-check" *ngIf="dataService.projects[p] && ind > 10 && filterSearch(projectNameFilterModel, dataService.projects[p].title) && expandView['project_id']">
+                <input id="{{p}}project" type="checkbox" class="form-check-input" [(ngModel)]="filterToggleMap['project_id'][p]" (change)="updateFilter($event, 'project_id', p)">
+                <label for="{{p}}project" class="form-check-label">{{dataService.projects[p].title}}</label>
+              </div>
+            </ng-container>
+            <button *ngIf="dataService.projectIDs.length > 10" class="btn btn-sm btn-link" (click)="toggleView('project_id')"><span *ngIf="expandView['project_id'] === false">View all</span><span *ngIf="expandView['project_id'] === true">Reduce view</span></button>
+          </div>
+          <div>
+            <b>Comparison ({{dataService.comparisonIDs.length}})</b>
+            <input type="text" class="form-control form-control-sm" placeholder="Filter comparison name" [(ngModel)]="comparisonNameFilterModel">
+            <ng-container *ngFor="let p of dataService.comparisonIDs; let ind = index">
+              <div class="form-check" *ngIf="dataService.comparisonMap[p] && ind < 10 && filterSearch(comparisonNameFilterModel, dataService.comparisonMap[p].name)">
+                <input id="{{p}}comparison-id" type="checkbox" class="form-check-input" [(ngModel)]="filterToggleMap['comparison_id'][p]" (change)="updateFilter($event, 'comparison_id', p)">
+                <label for="{{p}}comparison-id" class="form-check-label">{{dataService.comparisonMap[p].name}}</label>
+              </div>
+              <div class="form-check" *ngIf="dataService.comparisonMap[p] && ind > 10 && filterSearch(comparisonNameFilterModel, dataService.comparisonMap[p].name) && expandView['comparison_id']">
+                <input id="{{p}}comparison-id" type="checkbox" class="form-check-input" [(ngModel)]="filterToggleMap['comparison_id'][p]" (change)="updateFilter($event, 'comparison_id', p)">
+                <label for="{{p}}comparison-id" class="form-check-label">{{dataService.comparisonMap[p].name}}</label>
+              </div>
+            </ng-container>
+            <button *ngIf="dataService.comparisonIDs.length > 10" class="btn btn-sm btn-link" (click)="toggleView('comparison_id')"><span *ngIf="expandView['comparison_id'] === false">View all</span><span *ngIf="expandView['comparison_id'] === true">Reduce view</span></button>
+          </div>
+          <div>
+            <b>Primary IDs ({{dataService.primaryIDs.length}})</b>
+            <input type="text" class="form-control form-control-sm" placeholder="Filter primary ids" [(ngModel)]="primaryIDFilterModel">
+            <ng-container *ngFor="let p of dataService.primaryIDs; let ind = index">
+              <div class="form-check" *ngIf="ind < 10 && filterSearch(primaryIDFilterModel, p)">
+                <input id="{{p}}primary-id" type="checkbox" class="form-check-input" [(ngModel)]="filterToggleMap['primary_id'][p]" (change)="updateFilter($event, 'primary_id', p)">
+                <label style="overflow-wrap: break-word" for="{{p}}primary-id" class="form-check-label">{{p}}<span></span></label>
+              </div>
+              <div class="form-check" *ngIf="ind >= 10 && expandView['primary_id']">
+                <input id="{{p}}primary-id" type="checkbox" class="form-check-input" [(ngModel)]="filterToggleMap['primary_id'][p]" (change)="updateFilter($event, 'primary_id', p)">
+                <label style="overflow-wrap: break-word" for="{{p}}primary-id" class="form-check-label">{{p}}<span></span></label>
+              </div>
+            </ng-container>
+            <button *ngIf="dataService.primaryIDs.length > 10" class="btn btn-sm btn-link" (click)="toggleView('primary_id')"><span *ngIf="expandView['primary_id'] === false">View all</span><span *ngIf="expandView['primary_id'] === true">Reduce view</span></button>
+          </div>
+          <div>
+            <b>Gene names ({{dataService.geneNames.length}})</b>
+            <input type="text" class="form-control form-control-sm" placeholder="Filter gene names" [(ngModel)]="geneNamesFilterModel">
+            <ng-container *ngFor="let p of dataService.geneNames; let ind = index">
+              <div class="form-check" *ngIf="ind < 10 && filterSearch(geneNamesFilterModel, p)">
+                <input id="{{p}}gene-names" type="checkbox" class="form-check-input" [(ngModel)]="filterToggleMap['gene_names'][p]" (change)="updateFilter($event, 'gene_names', p)">
+                <label for="{{p}}gene-names" class="form-check-label">{{p}}<span></span></label>
+              </div>
+              <div class="form-check" *ngIf="ind >= 10 && expandView['gene_names'] && filterSearch(geneNamesFilterModel, p)">
+                <input id="{{p}}gene-names" type="checkbox" class="form-check-input" [(ngModel)]="filterToggleMap['gene_names'][p]" (change)="updateFilter($event, 'gene_names', p)">
+                <label for="{{p}}gene-names" class="form-check-label">{{p}}<span></span></label>
+              </div>
+            </ng-container>
+            <button *ngIf="dataService.geneNames.length > 10" class="btn btn-sm btn-link" (click)="toggleView('gene_names')"><span *ngIf="expandView['gene_names'] === false">View all</span><span *ngIf="expandView['gene_names'] === true">Reduce view</span></button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="col-10">
-    <div class="card">
-      <div class="card-body">
-        <ngb-pagination [collectionSize]="dataService.totalResultCount" [maxSize]="5" [rotate]="true" (pageChange)="updateViewer($event)" [(page)]="currentPage" [boundaryLinks]="true" [pageSize]="web.per_page"></ngb-pagination>
-        <table class="table table-striped table-hover">
-          <thead>
-          <tr>
-            <th scope="col">
-              Primary ID
-            </th>
-            <th scope="col">
-              Gene Name
-            </th>
-            <th scope="col">
-              Fold Change
-            </th>
-            <th scope="col">
-              Significant
-            </th>
-            <th scope="col">
-              Comparisons
-            </th>
-            <th scope="col">
-              Project
-            </th>
-            <th scope="col">
+    <div class="col-10">
+      <div class="card">
+        <div class="card-body">
+          <ngb-pagination [collectionSize]="dataService.totalResultCount" [maxSize]="5" [rotate]="true" (pageChange)="updateViewer($event)" [(page)]="currentPage" [boundaryLinks]="true" [pageSize]="web.per_page"></ngb-pagination>
+          <table class="table table-striped table-hover">
+            <thead>
+            <tr>
+              <th scope="col">
+                Primary ID
+              </th>
+              <th scope="col">
+                Gene Name
+              </th>
+              <th scope="col">
+                Fold Change
+              </th>
+              <th scope="col">
+                Significant
+              </th>
+              <th scope="col">
+                Comparisons
+              </th>
+              <th scope="col">
+                Project
+              </th>
+              <th scope="col">
 
-            </th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let r of displayDF">
-            <td>
-              <a class="text-link" target="_blank" href="/#/protein/{{r.primary_id}}/{{project_id}}">{{r.primary_id}}</a>
-            </td>
-            <td>
-              {{r.gene_names}}
-            </td>
-            <td>
-              {{r.foldChange}}
-            </td>
-            <td>
-              {{r.significant}}
-            </td>
-            <td>
-              {{dataService.comparisonMap[r.comparison_id.toString()].name}}
-            </td>
-            <td>
-              <ng-container *ngIf="dataService.projects[dataService.comparisonMap[r.comparison_id.toString()].project_id.toString()]">
+              </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let r of displayDF">
+              <td>
+                <a class="text-link" target="_blank" href="/#/protein/{{r.primary_id}}/{{project_id}}">{{r.primary_id}}</a>
+              </td>
+              <td>
+                {{r.gene_names}}
+              </td>
+              <td>
+                {{r.foldChange}}
+              </td>
+              <td>
+                {{r.significant}}
+              </td>
+              <td>
+                {{dataService.comparisonMap[r.comparison_id.toString()].name}}
+              </td>
+              <td>
+                <ng-container *ngIf="dataService.projects[dataService.comparisonMap[r.comparison_id.toString()].project_id.toString()]">
                 <span class="text-link" (click)="openProjectModal(dataService.projects[dataService.comparisonMap[r.comparison_id.toString()].project_id.toString()])">
                   {{dataService.projects[dataService.comparisonMap[r.comparison_id.toString()].project_id.toString()].title}}
                 </span>
-              </ng-container>
-            </td>
-            <td>
-              <div ngbDropdown class="d-inline-block">
-                <button class="btn btn-sm btn-outline-primary ml-2" ngbDropdownToggle>A</button>
-                <div ngbDropdownMenu>
-                  <button ngbDropdownItem (click)="openRawDataModal(r)">Raw Data Barchart</button>
+                </ng-container>
+              </td>
+              <td>
+                <div ngbDropdown class="d-inline-block">
+                  <button class="btn btn-sm btn-outline-primary ml-2" ngbDropdownToggle>A</button>
+                  <div ngbDropdownMenu>
+                    <button ngbDropdownItem (click)="openRawDataModal(r)">Raw Data Barchart</button>
+                  </div>
                 </div>
-              </div>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-        <ngb-pagination [collectionSize]="dataService.totalResultCount" [maxSize]="5" [rotate]="true" (pageChange)="updateViewer($event)" [(page)]="currentPage" [boundaryLinks]="true" [pageSize]="web.per_page"></ngb-pagination>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+          <ngb-pagination [collectionSize]="dataService.totalResultCount" [maxSize]="5" [rotate]="true" (pageChange)="updateViewer($event)" [(page)]="currentPage" [boundaryLinks]="true" [pageSize]="web.per_page"></ngb-pagination>
+        </div>
       </div>
     </div>
   </div>
-</div>
-
+</ng-container>
 <ng-template #noresult>
   <div class="card mt-2">
     <div class="card-body">

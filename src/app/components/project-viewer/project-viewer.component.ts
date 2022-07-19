@@ -14,6 +14,13 @@ export class ProjectViewerComponent implements OnInit {
   finished: boolean = false
   results: any[] = []
   df: IDataFrame = new DataFrame()
+  dataViewerSelection: any = {
+    "comparison_id": [],
+    "primary_id": [],
+    "project_id": [],
+    "gene_names": []
+  }
+
   constructor(public web: WebService, private route: ActivatedRoute, private data: DataService) {
     this.route.params.subscribe(params => {
       if (params) {
@@ -73,6 +80,10 @@ export class ProjectViewerComponent implements OnInit {
         }
       }
     })
+  }
+
+  handleDataViewerSelection(e: any) {
+    this.dataViewerSelection = e
   }
 
   ngOnInit(): void {

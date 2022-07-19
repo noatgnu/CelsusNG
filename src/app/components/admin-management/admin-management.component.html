@@ -2,8 +2,19 @@
   <app-login (loginEvent)="logged($event)"></app-login>
 </div>
 
+<div class="container" *ngIf="web.access_token !== ''">
+  <div class="card">
+    <div class="card-body">
+      <div class="d-grid gap-2 d-md-flex">
+        <input class="form-control" type="text" placeholder="Part of project title or author name" [(ngModel)]="searchText">
+        <button class="btn btn-primary" (click)="updateViewer(1)">Search</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <ng-container *ngIf="data.adminProjects.length > 0">
-  <div class="container">
+  <div class="container mt-2">
     <div class="card">
       <div class="card-body">
         <div class="row">
