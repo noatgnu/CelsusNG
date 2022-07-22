@@ -1,1 +1,10 @@
-<p>removal-confirmation-modal works!</p>
+<div class="modal-header">
+  Project Removal
+</div>
+<div class="modal-body">
+  <p>Remove project {{project.title}} ({{project.id}})?</p>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-danger" (click)="modal.close(true)">Remove</button>
+  <button class="btn btn-primary" (click)="modal.close(false)">Cancel</button>
+</div>

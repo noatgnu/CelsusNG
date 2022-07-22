@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {DataFrame, IDataFrame} from "data-forge";
 import {DataService} from "../../service/data.service";
 
@@ -9,13 +9,16 @@ import {DataService} from "../../service/data.service";
 })
 export class ProteinScatterPlotComponent implements OnInit {
   private _data: IDataFrame = new DataFrame()
+  @Output() selected: EventEmitter<any[]> = new EventEmitter<any[]>()
   layoutMaxMin: any = {
     xMin: 0, xMax: 0, yMin: 0, yMax: 0
   }
   graphData: any = []
   graphLayout: any = {
     height: 600, width: 600, xaxis: {title: "Log2FC"}, yaxis: {title: "-log10(p-value)"},
-    title: "Differential Analysis Data Distribution", annotations: []
+    title: "Differential Analysis Data Distribution", annotations: [], legend: {
+      orientation: 'h'
+    }
   }
   background: boolean = true
   backgroundColor: string = "#EEEEEE"
@@ -29,6 +32,7 @@ export class ProteinScatterPlotComponent implements OnInit {
   }
   @Input() set externalSelectionFilter(value: any) {
     this._externalSelectionFilter = value
+    console.log(value)
     this.draw()
   }
   get externalSelectionFilter(): any {
@@ -39,8 +43,9 @@ export class ProteinScatterPlotComponent implements OnInit {
     this._data = value
     this.draw();
   }
-
+  dataMap: Map<string, any> = new Map<string, any>()
   draw() {
+    this.dataMap = new Map<string, any>()
     this.layoutMaxMin = {
       xMin: 0, xMax: 0, yMin: 0, yMax: 0
     }
@@ -58,22 +63,63 @@ export class ProteinScatterPlotComponent implements OnInit {
     const temp: any = {}
     for (const r of this._data) {
       const comparison = this.dataService.comparisonMap[r["comparison_id"].toString()]
-      let group = ""
-      if (
-        this.externalSelectionFilter["primary_id"].includes(r["primary_id"])||
-        this.externalSelectionFilter["gene_names"].includes(r["gene_names"])||
-        this.externalSelectionFilter["comparison_id"].includes(r["comparison_id"])||
-        this.externalSelectionFilter["project_id"].includes(comparison["project_id"])
-      ) {
-        group = r["gene_names"]
+      const comparisonName = comparison.name
+      let text = `<b>Gene:</b>${r["gene_names"]}<br>`
+      text = `${text}<b>Primary ID:</b>${r["primary_id"]}<br>`
+      let project = ""
+      if (this.dataService.projects[comparison.project_id.toString()]) {
+        text = `${text}<b>Comparison:</b>${comparison.name}<br>`
+        text = `${text}<b>Project:</b>${this.dataService.projects[comparison.project_id.toString()].title}<br>`
+        project = this.dataService.projects[comparison.project_id.toString()].title
       } else {
+        text = text + "<b>Comparison:</b>" + comparison.name + "<br>"
+      }
+      text = `${text}<b>Log2FC:</b>${r["foldChange"]}<br><b>Significant:</b>${r["significant"]}<br>`
+      this.dataMap.set(text, r)
+      let group = ""
+      if (this.externalSelectionFilter["comparison_id"].length > 0 || this.externalSelectionFilter["project_id"].length > 0) {
+        if (this.externalSelectionFilter["comparison_id"].includes(r["comparison_id"]) || this._externalSelectionFilter["project_id"].includes(comparison["project_id"])) {
+          if (group === "") {
+            if (this.externalSelectionFilter["primary_id"].length > 0) {
+              if (this.externalSelectionFilter["primary_id"].includes(r["primary_id"])) {
+                group = r["gene_names"]
+              }
+            } else if (this.externalSelectionFilter["gene_names"].length > 0 ) {
+              if (this.externalSelectionFilter["gene_names"].includes(r["gene_names"])) {
+                group = r["gene_names"]
+              }
+            }
+          }
+        }
+      } else {
+        if (this.externalSelectionFilter["primary_id"].length > 0) {
+          if (this.externalSelectionFilter["primary_id"].includes(r["primary_id"])) {
+            group = r["gene_names"]
+          }
+        } else if (this.externalSelectionFilter["gene_names"].length > 0 ) {
+          if (this.externalSelectionFilter["gene_names"].includes(r["gene_names"])) {
+            group = r["gene_names"]
+          }
+        }
+      }
+      if (group === "") {
         group = this.significantGroup(r["foldChange"], r["significant"], this.background)
+      }
+      if (group !== "background") {
+        if (comparisonName !== "") {
+          group = group + " " + comparison.name
+        }
+        if (project !== "") {
+          group = group + "(" + project + ")"
+        }
       }
       if (!temp[group]) {
         temp[group] = {
           x: [],
           y: [],
           text: [],
+          // hovertemplate:
+          //   `<b>Log2FC:</b> %{x:.2f}<br><b>-log10(p-value):</b>%{y:.2f}<br>%{text}`,
           type: "scattergl",
           mode: "markers",
           name: group
@@ -86,13 +132,7 @@ export class ProteinScatterPlotComponent implements OnInit {
       }
       temp[group].x.push(r["foldChange"])
       temp[group].y.push(-Math.log10(r["significant"]))
-
-      if (this.dataService.projects[comparison.project_id.toString()]) {
-        temp[group].text.push(
-          this.dataService.projects[comparison.project_id.toString()].title + "-" + comparison.name + "-" + "(Project ID# " + comparison.project_id + ")")
-      } else {
-        temp[group].text.push(r["gene_names"] + "-" + comparison.name)
-      }
+      temp[group].text.push(text)
     }
     const graph: any[] = []
     for (const g in temp) {
@@ -176,5 +216,17 @@ export class ProteinScatterPlotComponent implements OnInit {
     }
 
     return groups.join(";")
+  }
+
+  selectData(e: any) {
+    if ("points" in e) {
+      const selected: string[] = []
+      for (const p of e["points"]) {
+        selected.push(this.dataMap.get(p.text))
+      }
+      if (selected.length > 0) {
+        this.selected.emit(selected)
+      }
+    }
   }
 }

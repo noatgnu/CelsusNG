@@ -74,7 +74,6 @@ export class WebService {
   getFileColumn(file: any) {
     const headers = new HttpHeaders().set("Access-Token", this.access_token)
     return this.http.post(this.hostURL + "/api/columns/", {username: this.username, file: file},{responseType: "json", observe: "body", headers: headers})
-
   }
 
   getUnipot(uniprotId: string) {
@@ -87,7 +86,20 @@ export class WebService {
     }
   }
 
+  adminDeleteProject(project_ids: number[]) {
+    const headers = new HttpHeaders().set("Access-Token", this.access_token)
+    return this.http.patch(this.hostURL + "/api/admin/", {username: this.username, project_ids}, {responseType: "json", observe: "body", headers: headers})
+  }
+
   getRawData(primary_id: string, project_id: string) {
     return this.http.get(this.hostURL + "/api/raw/" + primary_id + "/" + project_id + "/", {responseType: "json", observe: "body"})
+  }
+
+  saveSession(filterData: any) {
+    return this.http.post(this.hostURL + "/api/session/", filterData, {responseType: "json", observe: "body"})
+  }
+
+  getSession(id: string) {
+    return this.http.get(this.hostURL + "/api/session/" + id + "/", {responseType: "json", observe: "body"})
   }
 }

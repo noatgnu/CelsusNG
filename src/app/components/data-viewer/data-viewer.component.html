@@ -1,5 +1,7 @@
 <ng-container *ngIf="displayDF.count() > 0; else noresult">
   <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-2">
+    <a *ngIf="sessionID !== ''" href="{{getCurrentSession()}}">Session: {{sessionID}}</a>
+    <button class="btn btn-sm btn-primary" type="button" (click)="saveSession()">Save Session</button>
     <button class="btn btn-sm btn-primary" type="button" (click)="downloadDifferentialAnalysis()">Download</button>
   </div>
   <div class="row mt-2">

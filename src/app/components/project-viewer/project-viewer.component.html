@@ -165,13 +165,13 @@
       </ul>
     </div>
     <div class="container" *ngIf="results.length > 0">
-      <app-protein-scatter-plot [data]="df" [externalSelectionFilter]="dataViewerSelection"></app-protein-scatter-plot>
+      <app-protein-scatter-plot [data]="df" [externalSelectionFilter]="dataViewerSelection" (selected)="handlePlotSelecton($event)"></app-protein-scatter-plot>
     </div>
   </div>
 </div>
 
 <div *ngIf="finished">
   <div class="container-fluid">
-    <app-data-viewer [ignoreAvailability]="true" [data]="results" [project_id]="project.id" (selected)="handleDataViewerSelection($event)"></app-data-viewer>
+    <app-data-viewer [ignoreAvailability]="true" [data]="results" [project_id]="project.id" (selected)="handleDataViewerSelection($event)" [selectedInput]="plotSelection" [session]="sessionData"></app-data-viewer>
   </div>
 </div>

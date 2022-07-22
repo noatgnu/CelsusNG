@@ -1,6 +1,15 @@
 <div class="row">
   <div class="col-8">
-    <plotly-plot [data]="graphData" [layout]="graphLayout" [updateOnLayoutChange]="true" [updateOnDataChange]="true"></plotly-plot>
+    <plotly-plot
+      [data]="graphData"
+      [layout]="graphLayout"
+      [updateOnLayoutChange]="true"
+      [updateOnDataChange]="true"
+      (plotlyClick)="selectData($event)"
+      (selected)="selectData($event)"
+    >
+
+    </plotly-plot>
   </div>
   <div class="col-4">
     <div class="form-group" style="max-width: 200px">

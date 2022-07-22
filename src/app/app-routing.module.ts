@@ -10,7 +10,9 @@ const routes: Routes = [
   {path: "", component: HomeComponent},
   {path: "submission", component:ProjectFormComponent},
   {path: "project/:id", component: ProjectViewerComponent},
+  {path: "project/:id/:session", component: ProjectViewerComponent},
   {path: "protein/:protein_id/:project_id", component: ProteinViewerComponent},
+  {path: "protein/:protein_id/:project_id/:session", component: ProteinViewerComponent},
   {path: "admin", component: AdminManagementComponent}
 ];
 

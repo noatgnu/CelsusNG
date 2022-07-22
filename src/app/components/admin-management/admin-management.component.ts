@@ -4,6 +4,7 @@ import {DataService} from "../../service/data.service";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {ProjectEditorComponent} from "../project-editor/project-editor.component";
 import {ProjectFileEditorComponent} from "../project-file-editor/project-file-editor.component";
+import {RemovalConfirmationModalComponent} from "../removal-confirmation-modal/removal-confirmation-modal.component";
 
 @Component({
   selector: 'app-admin-management',
@@ -70,5 +71,28 @@ export class AdminManagementComponent implements OnInit {
     if (e) {
       this.updateViewer(1)
     }
+  }
+
+  removeProject(project: any) {
+    const ref = this.modal.open(RemovalConfirmationModalComponent)
+    ref.componentInstance.project = project
+    ref.closed.subscribe(data => {
+      if (data) {
+        this.web.adminDeleteProject([project.id]).subscribe(data => {
+          this.web.adminGetProjects(1, this.searchText).subscribe(data => {
+            // @ts-ignore
+            if (data["results"]) {
+              // @ts-ignore
+              this.data.adminProjects = data["results"]
+              // @ts-ignore
+              this.totalPages = data["total_pages"]
+              // @ts-ignore
+              this.totalCount = data["count"]
+            }
+          })
+        })
+
+      }
+    })
   }
 }

@@ -13,6 +13,17 @@ export class ProteinViewerComponent implements OnInit {
   df: IDataFrame = new DataFrame()
   uniprotData: any = {}
   results: any[] = []
+
+  sessionData: any = {}
+  dataViewerSelection: any = {
+    "comparison_id": [],
+    "primary_id": [],
+    "project_id": [],
+    "gene_names": []
+  }
+
+  plotSelection: any[] = []
+
   constructor(private route: ActivatedRoute, private web: WebService, public data: DataService) {
     this.route.params.subscribe(params => {
       if (params["protein_id"]) {
@@ -102,11 +113,18 @@ export class ProteinViewerComponent implements OnInit {
           this.data.totalResultCount = res["count"]
         }
         this.df = new DataFrame(res["all_results"])
+        if (params["session"]) {
+          this.web.getSession(params["session"]).subscribe(data => {
+            this.sessionData = data
+          })
+        }
       }
     })
   }
 
   ngOnInit(): void {
   }
-
+  handleDataViewerSelection(e: any) {
+    this.dataViewerSelection = e
+  }
 }

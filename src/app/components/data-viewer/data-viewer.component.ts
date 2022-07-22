@@ -18,6 +18,7 @@ export class DataViewerComponent implements OnInit {
   comparisonNameFilterModel: string = ""
   primaryIDFilterModel: string = ""
   geneNamesFilterModel: string = ""
+  sessionID: string = ""
   filterToggleMap: any = {"project_id": {"activeFilter": 0}, "primary_id": {"activeFilter": 0}, "comparison_id": {"activeFilter": 0}}
   filter: any = {
     "comparison_id": [],
@@ -34,8 +35,32 @@ export class DataViewerComponent implements OnInit {
   currentPage = 1
   per_page = 20
 
+  @Input() set session(value: any) {
+    if ("_id" in value) {
+      for (const f in this.filterToggleMap) {
+        this.filterToggleMap[f] = value[f]
+      }
+      this.performUpdate()
+    }
+  }
   @Output() selected: EventEmitter<any> = new EventEmitter<any>()
+  @Input() set selectedInput(value: any[]) {
+    if (value.length > 0) {
+      for (const r of value) {
+        const comparison = this.dataService.comparisonMap[r["comparison_id"].toString()]
+        this.updateFilterCounter("primary_id", r["primary_id"])
+        if (this.filterToggleMap["comparison_id"][r["comparison_id"].toString()] !== true) {
+          this.updateFilterCounter("comparison_id", r["comparison_id"].toString())
+        }
+        if (this.filterToggleMap["project_id"][comparison["project_id"].toString()] !== true) {
+          this.filterToggleMap["project_id"][comparison["project_id"].toString()] = true
+          this.updateFilterCounter("project_id", comparison["project_id"].toString())
+        }
+      }
+      this.performUpdate()
+    }
 
+  }
   @Input() project_id: number = 0
   @Input() ignoreAvailability: boolean = false
   @Input() set data(value: any[]) {
@@ -64,12 +89,13 @@ export class DataViewerComponent implements OnInit {
   }
 
   updateFilter(e: any, section: string, id: string) {
-    if (this.filterToggleMap[section][id] === false) {
-      this.filterToggleMap[section]["activeFilter"] = this.filterToggleMap[section]["activeFilter"] - 1
-    } else {
-      this.filterToggleMap[section]["activeFilter"] = this.filterToggleMap[section]["activeFilter"] + 1
-    }
-    this.filter = {
+    this.updateFilterCounter(section, id);
+    this.performUpdate();
+    //this.displayDF = this._data.where(r =>  comparison_id_list.includes(r["comparison_id"].toString()) && primary_id_list.includes(r["primary_id"]) && project_id_list.includes(r["comparison"]["project_id"].toString())).bake()
+  }
+
+  private performUpdate() {
+    const filter: any = {
       "comparison_id": [],
       "primary_id": [],
       "project_id": [],
@@ -82,16 +108,16 @@ export class DataViewerComponent implements OnInit {
             if (this.filterToggleMap[s][f] === true) {
               switch (s) {
                 case "primary_id":
-                  this.filter[s].push(f)
+                  filter[s].push(f)
                   break
                 case "project_id":
-                  this.filter[s].push(parseInt(f))
+                  filter[s].push(parseInt(f))
                   break
                 case "comparison_id":
-                  this.filter[s].push(parseInt(f))
+                  filter[s].push(parseInt(f))
                   break
                 case "gene_names":
-                  this.filter[s].push(f)
+                  filter[s].push(f)
                   break
               }
             }
@@ -111,10 +137,10 @@ export class DataViewerComponent implements OnInit {
         }
       }*/
     }
-
+    this.filter = filter
     this.selected.emit(this.filter)
 
-    this.web.searchDifferentialAnalysis([],1,20,"filter",this.filter, this.ignoreAvailability).subscribe(data => {
+    this.web.searchDifferentialAnalysis([], 1, 20, "filter", this.filter, this.ignoreAvailability).subscribe(data => {
       data = data.replace(/NaN/g, "null")
       const res = JSON.parse(data)
       this.displayDF = new DataFrame(res["results"])
@@ -127,7 +153,17 @@ export class DataViewerComponent implements OnInit {
         this.dataService.totalResultCount = res["count"]
       }
     })
-    //this.displayDF = this._data.where(r =>  comparison_id_list.includes(r["comparison_id"].toString()) && primary_id_list.includes(r["primary_id"]) && project_id_list.includes(r["comparison"]["project_id"].toString())).bake()
+  }
+
+  private updateFilterCounter(section: string, id: string) {
+    if (this.filterToggleMap[section][id] === undefined) {
+      this.filterToggleMap[section][id] = true
+    }
+    if (this.filterToggleMap[section][id] === false) {
+      this.filterToggleMap[section]["activeFilter"] = this.filterToggleMap[section]["activeFilter"] - 1
+    } else {
+      this.filterToggleMap[section]["activeFilter"] = this.filterToggleMap[section]["activeFilter"] + 1
+    }
   }
 
   openProjectModal(p: any) {
@@ -180,5 +216,16 @@ export class DataViewerComponent implements OnInit {
         window.open(this.web.hostURL + "/api/download/" + body["download-token"] + "/", "_blank")
       }
     })
+  }
+
+  saveSession() {
+    this.web.saveSession(this.filterToggleMap).subscribe(data => {
+      // @ts-ignore
+      this.sessionID = data["_id"]
+    })
+  }
+
+  getCurrentSession() {
+    return window.location.href + "/" + this.sessionID
   }
 }

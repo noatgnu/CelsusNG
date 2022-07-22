@@ -73,6 +73,6 @@
 </div>
 
 <div class="container-fluid" *ngIf="df.count() > 0">
-  <app-data-viewer [data]="results"></app-data-viewer>
+  <app-data-viewer [data]="results" [session]="sessionData" (selected)="handleDataViewerSelection($event)" [selectedInput]="plotSelection"></app-data-viewer>
 </div>
 

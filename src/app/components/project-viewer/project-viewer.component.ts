@@ -21,6 +21,9 @@ export class ProjectViewerComponent implements OnInit {
     "gene_names": []
   }
 
+  sessionData: any = {}
+
+  plotSelection: any[] = []
   constructor(public web: WebService, private route: ActivatedRoute, private data: DataService) {
     this.route.params.subscribe(params => {
       if (params) {
@@ -75,6 +78,11 @@ export class ProjectViewerComponent implements OnInit {
                 }
               })
               this.finished = true
+              if (params["session"]) {
+                this.web.getSession(params["session"]).subscribe(data => {
+                  this.sessionData = data
+                })
+              }
             }
           })
         }
@@ -89,5 +97,8 @@ export class ProjectViewerComponent implements OnInit {
   ngOnInit(): void {
   }
 
-
+  handlePlotSelecton(e: any[]) {
+    this.plotSelection = e
+    console.log(this.plotSelection)
+  }
 }
