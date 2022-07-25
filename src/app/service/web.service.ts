@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Project} from "../classes/project";
+import {environment} from "../../environments/environment";
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,7 @@ import {Project} from "../classes/project";
 export class WebService {
   username = "admin"
   password = ""
-  hostURL = "http://localhost:8000"
+  hostURL = environment.host
   uniqueID = ""
   justSearched: string[] = []
   currentPage = 1
