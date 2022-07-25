@@ -322,9 +322,9 @@
             </ng-container>
 
           </ng-container>
-          <div class="mt-2">
-            <ngb-progressbar *ngIf="progress[project.files[ind].name]" type="info" [value]="progress[project.files[ind].name]" [animated]="true" [striped]="true">
-              <span *ngIf="progress[project.files[ind].name]===100">Completed</span>
+          <div class="mt-2" *ngIf="progress[project.files[ind].name]">
+            <ngb-progressbar type="info" [value]="progress[project.files[ind].name].progress" [animated]="true" [striped]="true">
+              <span>{{progress[project.files[ind].name].status}}</span>
             </ngb-progressbar>
           </div>
           <div class="mt-2">

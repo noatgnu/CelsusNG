@@ -140,6 +140,7 @@ export class ProteinScatterPlotComponent implements OnInit {
     }
     this.drawCutoffShape()
     this.graphData = graph
+    console.log(this.graphData)
   }
 
   drawCutoffShape() {

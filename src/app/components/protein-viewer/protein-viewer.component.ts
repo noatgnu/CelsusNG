@@ -13,7 +13,7 @@ export class ProteinViewerComponent implements OnInit {
   df: IDataFrame = new DataFrame()
   uniprotData: any = {}
   results: any[] = []
-
+  finsihed: boolean = false
   sessionData: any = {}
   dataViewerSelection: any = {
     "comparison_id": [],
@@ -30,7 +30,6 @@ export class ProteinViewerComponent implements OnInit {
         if (params["project_id"]) {
           this.web.getUnipot(params["protein_id"].split(";")[0].split("-")[0]).subscribe(data => {
             this.uniprotData = data
-            console.log(this.uniprotData)
           })
 
           let project: number[] = []
@@ -44,6 +43,7 @@ export class ProteinViewerComponent implements OnInit {
                   this.data.projects[p.id.toString()] = p
                 }
                 this.getDifferentialData(params, project);
+
               }
             })
           } else {
@@ -55,6 +55,7 @@ export class ProteinViewerComponent implements OnInit {
                   this.data.projects[p.id.toString()] = p
                 }
                 this.getDifferentialData(params, project);
+
               }
             })
           }
@@ -66,11 +67,16 @@ export class ProteinViewerComponent implements OnInit {
   private getDifferentialData(params: any, project: number[]) {
     const term: string[] = [decodeURI(params["protein_id"])]
     for (const p of decodeURI(params["protein_id"]).split(";")) {
-      term.push(p)
+      if (!term.includes(p)) {
+        term.push(p)
+      }
+
       const Re = /([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2})(-\d+)?/;
       const match = Re.exec(p)
       if (match) {
-        term.push(match[1])
+        if (!term.includes(match[1])) {
+          term.push(match[1])
+        }
       }
     }
     this.web.searchDifferentialAnalysis(
@@ -113,12 +119,14 @@ export class ProteinViewerComponent implements OnInit {
           this.data.totalResultCount = res["count"]
         }
         this.df = new DataFrame(res["all_results"])
+        console.log(this.df)
         if (params["session"]) {
           this.web.getSession(params["session"]).subscribe(data => {
             this.sessionData = data
           })
         }
       }
+      this.finsihed = true
     })
   }
 

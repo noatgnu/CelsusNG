@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Project} from "../../classes/project";
 import {WebService} from "../../service/web.service";
 import {fromCSV} from "data-forge";
@@ -105,12 +105,7 @@ export class ProjectFormComponent implements OnInit {
         console.log(f)
          {
           this.fileUploadError[f.name] = false
-          if (this.progress[f.name] !== undefined) {
-            if (this.progress[f.name] === 100) {
-              //continue
-            }
-          }
-          this.progress[f.name] = 0
+          this.progress[f.name] = {progress: 0, status: "uploading"}
           this.uploadFile(f);
         }
       }
@@ -120,14 +115,19 @@ export class ProjectFormComponent implements OnInit {
   uploadFile(f: any) {
     this.web.uploadFile(this.filesForUpload[f.name]).subscribe(ev => {
       if (ev.type == HttpEventType.UploadProgress) {
+        console.log(this.progress)
         console.log(ev)
         // @ts-ignore
-        this.progress[f.name] = Math.round(100 * (ev.loaded / ev.total));
+        this.progress[f.name].progress = Math.round(100 * (ev.loaded / ev.total));
+      }
+      if (ev.type == HttpEventType.Response) {
+        this.progress[f.name].status = "completed"
       }
     }, error => {
       console.log(error)
       alert("Failed to upload " + f.name)
       this.fileUploadError[f.name] = true
+      this.progress[f.name]["status"] = "error"
     })
   }
 
