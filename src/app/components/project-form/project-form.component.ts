@@ -17,7 +17,8 @@ export class ProjectFormComponent implements OnInit {
     "Affinity purification (AP-MS)",
     "SRM/MRM",
     "SWATH MS",
-    "MS Imaging"
+    "MS Imaging",
+    "TMT"
   ]
 
   fileTypes: string[] = [
