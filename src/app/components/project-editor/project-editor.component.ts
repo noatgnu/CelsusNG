@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {NgbActiveModal, NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 import {WebService} from "../../service/web.service";
 import {NgbDateStructAdapter} from "@ng-bootstrap/ng-bootstrap/datepicker/adapters/ngb-date-adapter";
+import {DataService} from "../../service/data.service";
 
 @Component({
   selector: 'app-project-editor',
@@ -11,14 +12,7 @@ import {NgbDateStructAdapter} from "@ng-bootstrap/ng-bootstrap/datepicker/adapte
 export class ProjectEditorComponent implements OnInit {
   project: any = {}
 
-  experimentTypes: string[] = [
-    "Shotgun proteomics",
-    "Cross-linking (CX-MS)",
-    "Affinity purification (AP-MS)",
-    "SRM/MRM",
-    "SWATH MS",
-    "MS Imaging"
-  ]
+  experimentTypes: string[] = this.dataService.experimentTypes
 
 
   finished = false
@@ -37,7 +31,7 @@ export class ProjectEditorComponent implements OnInit {
     })
   }
 
-  constructor(private web: WebService, public modal: NgbActiveModal) { }
+  constructor(private web: WebService, public modal: NgbActiveModal, private dataService: DataService) { }
 
   ngOnInit(): void {
   }

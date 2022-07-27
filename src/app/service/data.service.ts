@@ -9,6 +9,16 @@ export class DataService {
     return this._projectIDs;
   }
 
+  experimentTypes: string[] = [
+    "Shotgun proteomics",
+    "Cross-linking (CX-MS)",
+    "Affinity purification (AP-MS)",
+    "SRM/MRM",
+    "SWATH MS",
+    "MS Imaging",
+    "TMT"
+  ]
+
   set projectIDs(value: string[]) {
     this._projectIDs = value;
   }

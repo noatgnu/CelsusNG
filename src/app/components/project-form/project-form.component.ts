@@ -3,6 +3,7 @@ import {Project} from "../../classes/project";
 import {WebService} from "../../service/web.service";
 import {fromCSV} from "data-forge";
 import {HttpEventType} from "@angular/common/http";
+import {DataService} from "../../service/data.service";
 
 @Component({
   selector: 'app-project-form',
@@ -11,15 +12,7 @@ import {HttpEventType} from "@angular/common/http";
 })
 export class ProjectFormComponent implements OnInit {
   project = new Project()
-  experimentTypes: string[] = [
-    "Shotgun proteomics",
-    "Cross-linking (CX-MS)",
-    "Affinity purification (AP-MS)",
-    "SRM/MRM",
-    "SWATH MS",
-    "MS Imaging",
-    "TMT"
-  ]
+  experimentTypes: string[] = this.dataService.experimentTypes
 
   fileTypes: string[] = [
     "Raw",
@@ -45,7 +38,7 @@ export class ProjectFormComponent implements OnInit {
 
   comparisons: any[] = []
 
-  constructor(public web: WebService) { }
+  constructor(public web: WebService, private dataService: DataService) { }
 
   ngOnInit(): void {
   }
