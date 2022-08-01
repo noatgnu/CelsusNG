@@ -62,22 +62,32 @@
                   {{d.title}}
                 </td>
                 <td>
-                  <span *ngFor="let a of d.authors">{{a.name}},</span>
+                  <ng-container *ngFor="let a of d.authors">
+                    <span *ngIf="a.name !== ''">{{a.name}},</span>
+                  </ng-container>
                 </td>
                 <td>
                   {{d.experimentType}}
                 </td>
                 <td>
-                  <span *ngFor="let a of d.organisms">{{a.name}},</span>
+                  <ng-container *ngFor="let a of d.organisms">
+                    <span *ngIf="a.name !== ''">{{a.name}},</span>
+                  </ng-container>
                 </td>
                 <td>
-                  <span *ngFor="let a of d.tissues">{{a.name}},</span>
+                  <ng-container *ngFor="let a of d.tissues">
+                    <span *ngIf="a.name !== ''">{{a.name}},</span>
+                  </ng-container>
                 </td>
                 <td>
-                  <span *ngFor="let a of d.instruments">{{a.name}},</span>
+                  <ng-container *ngFor="let a of d.instruments">
+                    <span *ngIf="a.name !== ''">{{a.name}},</span>
+                  </ng-container>
                 </td>
                 <td>
-                  <span *ngFor="let a of d.cellTypes">{{a.name}},</span>
+                  <ng-container *ngFor="let a of d.cellTypes">
+                    <span *ngIf="a.name !== ''">{{a.name}},</span>
+                  </ng-container>
                 </td>
                 <td class="text-center">
                   <input type="checkbox" class="form-check-input" [(ngModel)]="d.enable" (change)="update(d, ['enable'])">

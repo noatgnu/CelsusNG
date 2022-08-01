@@ -5,19 +5,25 @@
       <div class="col-4">
         <b class="display-7">Authors</b>
         <ul>
-          <li *ngFor="let a of project.authors" [ngClass]="{'text-primary': a.first}">{{a.name}}, {{a.contact}}</li>
+          <ng-container *ngFor="let a of project.authors">
+            <li *ngIf="a.name !== ''" [ngClass]="{'text-primary': a.first}">{{a.name}}, {{a.contact}}</li>
+          </ng-container>
         </ul>
       </div>
       <div class="col-4">
         <b class="display-7">Collaborators</b>
         <ul>
-          <li *ngFor="let a of project.collaborators">{{a.name}}, {{a.contact}}</li>
+          <ng-container *ngFor="let a of project.collaborators">
+            <li *ngIf="a.name !== ''">{{a.name}}, {{a.contact}}</li>
+          </ng-container>
         </ul>
       </div>
       <div class="col-4">
         <b class="display-7">PIs</b>
         <ul>
-          <li *ngFor="let a of project.pis">{{a.name}}, {{a.contact}}</li>
+          <ng-container *ngFor="let a of project.pis">
+            <li *ngIf="a.name !== ''">{{a.name}}, {{a.contact}}</li>
+          </ng-container>
         </ul>
       </div>
       <div class="col-8">

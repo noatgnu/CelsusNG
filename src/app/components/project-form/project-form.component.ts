@@ -37,7 +37,7 @@ export class ProjectFormComponent implements OnInit {
   fileUploadError: any = {}
 
   comparisons: any[] = []
-
+  finished: boolean = false
   constructor(public web: WebService, private dataService: DataService) { }
 
   ngOnInit(): void {
@@ -54,7 +54,7 @@ export class ProjectFormComponent implements OnInit {
   }
 
   submit() {
-
+    this.finished = false
     for (let ind = 0; ind < this.project.files.length; ind ++) {
       const cols: any[] = []
       for (const n of this.selectedCols[this.project.files[ind].name]) {
@@ -113,9 +113,22 @@ export class ProjectFormComponent implements OnInit {
         console.log(ev)
         // @ts-ignore
         this.progress[f.name].progress = Math.round(100 * (ev.loaded / ev.total));
+        if (ev.loaded === ev.total) {
+          this.progress[f.name].status = "processing"
+        }
       }
       if (ev.type == HttpEventType.Response) {
         this.progress[f.name].status = "completed"
+        let totalfile = 0
+        for (const n in this.progress) {
+          totalfile ++
+          if (this.progress[n] === "completed") {
+            totalfile --
+          }
+        }
+        if (totalfile === 0) {
+          this.finished = true
+        }
       }
     }, error => {
       console.log(error)

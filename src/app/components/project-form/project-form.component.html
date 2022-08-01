@@ -343,8 +343,8 @@
     <div class="col-2">
       <button class="btn btn-primary" (click)="submit()">Submit</button>
     </div>
-    <div class="col-10">
-      <a class="text-link" href="{{web.hostURL}}/api/project/{{web.uniqueID}}"></a>
+    <div class="col-2" *ngIf="finished">
+      <a type="button" class="btn btn-primary" href="{{web.hostURL}}/api/project/{{web.uniqueID}}">Go to project</a>
     </div>
   </div>
 </div>
