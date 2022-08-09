@@ -97,7 +97,7 @@ export class ProjectViewerComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  handlePlotSelecton(e: any[]) {
+  handlePlotSelection(e: any[]) {
     this.plotSelection = e
     console.log(this.plotSelection)
   }

@@ -171,7 +171,7 @@
       </ul>
     </div>
     <div class="container" *ngIf="results.length > 0">
-      <app-protein-scatter-plot [data]="df" [externalSelectionFilter]="dataViewerSelection" (selected)="handlePlotSelecton($event)"></app-protein-scatter-plot>
+      <app-protein-scatter-plot [data]="df" [externalSelectionFilter]="dataViewerSelection" (selected)="handlePlotSelection($event)"></app-protein-scatter-plot>
     </div>
   </div>
 </div>

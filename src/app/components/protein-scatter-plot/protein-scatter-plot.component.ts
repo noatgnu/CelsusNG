@@ -81,11 +81,11 @@ export class ProteinScatterPlotComponent implements OnInit {
         if (this.externalSelectionFilter["comparison_id"].includes(r["comparison_id"]) || this._externalSelectionFilter["project_id"].includes(comparison["project_id"])) {
           if (group === "") {
             if (this.externalSelectionFilter["primary_id"].length > 0) {
-              if (this.externalSelectionFilter["primary_id"].includes(r["primary_id"])) {
+              if (this.externalSelectionFilter["primary_id"].includes(r["primary_id"]) && this.externalSelectionFilter["comparison_id"].includes(r["comparison_id"])) {
                 group = r["gene_names"]
               }
             } else if (this.externalSelectionFilter["gene_names"].length > 0 ) {
-              if (this.externalSelectionFilter["gene_names"].includes(r["gene_names"])) {
+              if (this.externalSelectionFilter["gene_names"].includes(r["gene_names"]) && this.externalSelectionFilter["comparison_id"].includes(r["comparison_id"])) {
                 group = r["gene_names"]
               }
             }
@@ -107,7 +107,7 @@ export class ProteinScatterPlotComponent implements OnInit {
       }
       if (group !== "background") {
         if (comparisonName !== "") {
-          group = group + " " + comparison.name
+          group = group + " <b>" + comparison.name + "</b>"
         }
         if (project !== "") {
           group = group + "(" + project + ")"

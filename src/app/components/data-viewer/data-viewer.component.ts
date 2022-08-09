@@ -43,23 +43,28 @@ export class DataViewerComponent implements OnInit {
       this.performUpdate()
     }
   }
+
+  private _selectedInput: any[] = []
+
   @Output() selected: EventEmitter<any> = new EventEmitter<any>()
   @Input() set selectedInput(value: any[]) {
+    this._selectedInput = value
     if (value.length > 0) {
-      for (const r of value) {
-        const comparison = this.dataService.comparisonMap[r["comparison_id"].toString()]
-        this.updateFilterCounter("primary_id", r["primary_id"])
-        if (this.filterToggleMap["comparison_id"][r["comparison_id"].toString()] !== true) {
-          this.updateFilterCounter("comparison_id", r["comparison_id"].toString())
+      if(this.dataService.comparisonMap) {
+        for (const r of value) {
+          const comparison = this.dataService.comparisonMap[r["comparison_id"].toString()]
+          this.updateFilterCounter("primary_id", r["primary_id"])
+          if (this.filterToggleMap["comparison_id"][r["comparison_id"].toString()] !== true) {
+            this.updateFilterCounter("comparison_id", r["comparison_id"].toString())
+          }
+          if (this.filterToggleMap["project_id"][comparison["project_id"].toString()] !== true) {
+            this.filterToggleMap["project_id"][comparison["project_id"].toString()] = true
+            this.updateFilterCounter("project_id", comparison["project_id"].toString())
+          }
         }
-        if (this.filterToggleMap["project_id"][comparison["project_id"].toString()] !== true) {
-          this.filterToggleMap["project_id"][comparison["project_id"].toString()] = true
-          this.updateFilterCounter("project_id", comparison["project_id"].toString())
-        }
+        this.performUpdate()
       }
-      this.performUpdate()
     }
-
   }
   @Input() project_id: number = 0
   @Input() ignoreAvailability: boolean = false
@@ -77,6 +82,9 @@ export class DataViewerComponent implements OnInit {
           for (const p of data["results"]) {
             this.filterToggleMap["project_id"][p.id.toString()] = false
             this.dataService.projects[p.id.toString()] = p
+          }
+          if (this._selectedInput.length > 0) {
+            this.selectedInput = this._selectedInput
           }
         }
       })
@@ -138,6 +146,7 @@ export class DataViewerComponent implements OnInit {
       }*/
     }
     this.filter = filter
+    console.log(filter)
     this.selected.emit(this.filter)
 
     this.web.searchDifferentialAnalysis([], 1, 20, "filter", this.filter, this.ignoreAvailability).subscribe(data => {
