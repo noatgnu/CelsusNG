@@ -38,17 +38,18 @@ export class DataViewerComponent implements OnInit {
   updateSessionLater: boolean = true
   @Input() set session(value: any) {
     this._session = value
-    if ("_id" in value) {
-      for (const f in this.filterToggleMap) {
-        this.filterToggleMap[f] = value[f]
-      }
-      if(this.dataService.comparisonMap) {
-        this.updateSessionLater = false
-        this.performUpdate()
-      } else {
-        this.updateSessionLater = true
-      }
-    }
+    // if ("_id" in value) {
+    //   for (const f in this.filterToggleMap) {
+    //     this.filterToggleMap[f] = value[f]
+    //   }
+    //   console.log(this.filterToggleMap)
+    //   if(this.dataService.comparisonMap) {
+    //     this.updateSessionLater = false
+    //     this.performUpdate()
+    //   } else {
+    //     this.updateSessionLater = true
+    //   }
+    // }
   }
 
   private _selectedInput: any[] = []
@@ -79,20 +80,29 @@ export class DataViewerComponent implements OnInit {
     this._data = new DataFrame(value)
     this.filterToggleMap = {"project_id": {"activeFilter": 0}, "primary_id": {"activeFilter": 0}, "comparison_id": {"activeFilter": 0}, "gene_names": {"activeFilter": 0}}
     this.currentPage = 1
-    if (this.updateSessionLater) {
-      this.displayDF = new DataFrame(value)
-      this.performUpdate()
-      console.log(this.displayDF)
-    }
+    this.displayDF = new DataFrame(value)
     if (this.dataService.projectIDs.length > 0) {
       this.web.getProjects(this.dataService.projectIDs).subscribe(data => {
         // @ts-ignore
         if (data["results"]) {
-          this.filterToggleMap["project_id"] = {"activeFilter": 0}
-          // @ts-ignore
-          for (const p of data["results"]) {
-            this.filterToggleMap["project_id"][p.id.toString()] = false
-            this.dataService.projects[p.id.toString()] = p
+          console.log(this._session)
+          if (!("_id" in this._session)) {
+            this.filterToggleMap["project_id"] = {"activeFilter": 0}
+            // @ts-ignore
+            for (const p of data["results"]) {
+              this.filterToggleMap["project_id"][p.id.toString()] = false
+              this.dataService.projects[p.id.toString()] = p
+            }
+          }
+          console.log(this.filterToggleMap)
+          if (this.updateSessionLater) {
+            for (const f in this.filterToggleMap) {
+              if (this._session[f]) {
+                this.filterToggleMap[f] = this._session[f]
+              }
+            }
+            this.displayDF = new DataFrame(value)
+            this.performUpdate()
           }
         }
       })
