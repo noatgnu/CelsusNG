@@ -34,13 +34,20 @@ export class DataViewerComponent implements OnInit {
   }
   currentPage = 1
   per_page = 20
-
+  private _session: any = {}
+  updateSessionLater: boolean = true
   @Input() set session(value: any) {
+    this._session = value
     if ("_id" in value) {
       for (const f in this.filterToggleMap) {
         this.filterToggleMap[f] = value[f]
       }
-      this.performUpdate()
+      if(this.dataService.comparisonMap) {
+        this.updateSessionLater = false
+        this.performUpdate()
+      } else {
+        this.updateSessionLater = true
+      }
     }
   }
 
@@ -72,7 +79,11 @@ export class DataViewerComponent implements OnInit {
     this._data = new DataFrame(value)
     this.filterToggleMap = {"project_id": {"activeFilter": 0}, "primary_id": {"activeFilter": 0}, "comparison_id": {"activeFilter": 0}, "gene_names": {"activeFilter": 0}}
     this.currentPage = 1
-    this.displayDF = new DataFrame(value)
+    if (this.updateSessionLater) {
+      this.displayDF = new DataFrame(value)
+      this.performUpdate()
+      console.log(this.displayDF)
+    }
     if (this.dataService.projectIDs.length > 0) {
       this.web.getProjects(this.dataService.projectIDs).subscribe(data => {
         // @ts-ignore
@@ -82,9 +93,6 @@ export class DataViewerComponent implements OnInit {
           for (const p of data["results"]) {
             this.filterToggleMap["project_id"][p.id.toString()] = false
             this.dataService.projects[p.id.toString()] = p
-          }
-          if (this._selectedInput.length > 0) {
-            this.selectedInput = this._selectedInput
           }
         }
       })
@@ -103,6 +111,7 @@ export class DataViewerComponent implements OnInit {
   }
 
   private performUpdate() {
+    console.log(this.updateSessionLater)
     const filter: any = {
       "comparison_id": [],
       "primary_id": [],
@@ -153,6 +162,7 @@ export class DataViewerComponent implements OnInit {
       data = data.replace(/NaN/g, "null")
       const res = JSON.parse(data)
       this.displayDF = new DataFrame(res["results"])
+      console.log(this.displayDF)
       if ("total_pages" in res) {
         // @ts-ignore
         this.dataService.totalPages = res["total_pages"]
@@ -235,6 +245,9 @@ export class DataViewerComponent implements OnInit {
   }
 
   getCurrentSession() {
+    if ("_id" in this._session) {
+      return window.location.href.replace(this._session["_id"], "") + this.sessionID
+    }
     return window.location.href + "/" + this.sessionID
   }
 }

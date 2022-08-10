@@ -116,7 +116,9 @@
                 {{r.significant}}
               </td>
               <td>
-                {{dataService.comparisonMap[r.comparison_id.toString()].name}}
+                <span *ngIf="dataService.comparisonMap[r.comparison_id.toString()]">
+                  <b>{{dataService.comparisonMap[r.comparison_id.toString()].name}}</b>
+                </span>
               </td>
               <td>
                 <ng-container *ngIf="dataService.projects[dataService.comparisonMap[r.comparison_id.toString()].project_id.toString()]">
