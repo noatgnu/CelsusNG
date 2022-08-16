@@ -27,6 +27,8 @@ import { RawDataModalComponent } from './components/raw-data-modal/raw-data-moda
 import { RawDataBarChartComponent } from './components/raw-data-bar-chart/raw-data-bar-chart.component';
 import { LatestProjectComponent } from './components/latest-project/latest-project.component';
 import { RemovalConfirmationModalComponent } from './components/removal-confirmation-modal/removal-confirmation-modal.component';
+import { BatchSelectionPromptComponent } from './components/batch-selection-prompt/batch-selection-prompt.component';
+import { CreateCustomViewComponent } from './components/create-custom-view/create-custom-view.component';
 
 PlotlyModule.plotlyjs = PlotlyJS;
 @NgModule({
@@ -48,7 +50,9 @@ PlotlyModule.plotlyjs = PlotlyJS;
     RawDataModalComponent,
     RawDataBarChartComponent,
     LatestProjectComponent,
-    RemovalConfirmationModalComponent
+    RemovalConfirmationModalComponent,
+    BatchSelectionPromptComponent,
+    CreateCustomViewComponent
   ],
   imports: [
     BrowserModule,

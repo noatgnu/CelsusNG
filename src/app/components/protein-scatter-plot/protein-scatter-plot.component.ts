@@ -28,11 +28,11 @@ export class ProteinScatterPlotComponent implements OnInit {
     "comparison_id": [],
     "primary_id": [],
     "project_id": [],
-    "gene_names": []
+    "gene_names": [],
+    "title": ""
   }
   @Input() set externalSelectionFilter(value: any) {
     this._externalSelectionFilter = value
-    console.log(value)
     this.draw()
   }
   get externalSelectionFilter(): any {
@@ -83,10 +83,21 @@ export class ProteinScatterPlotComponent implements OnInit {
             if (this.externalSelectionFilter["primary_id"].length > 0) {
               if (this.externalSelectionFilter["primary_id"].includes(r["primary_id"]) && this.externalSelectionFilter["comparison_id"].includes(r["comparison_id"])) {
                 group = r["gene_names"]
+                if (this.externalSelectionFilter["title"] !== "") {
+                  if (this.externalSelectionFilter["primary_id"].includes(r["primary_id"])) {
+                    group = this.externalSelectionFilter["title"]
+                  }
+                }
+
               }
             } else if (this.externalSelectionFilter["gene_names"].length > 0 ) {
               if (this.externalSelectionFilter["gene_names"].includes(r["gene_names"]) && this.externalSelectionFilter["comparison_id"].includes(r["comparison_id"])) {
                 group = r["gene_names"]
+                if (this.externalSelectionFilter["title"] !== "") {
+                  if (this.externalSelectionFilter["gene_names"].includes(r["gene_names"])) {
+                    group = this.externalSelectionFilter["title"]
+                  }
+                }
               }
             }
           }
@@ -95,10 +106,20 @@ export class ProteinScatterPlotComponent implements OnInit {
         if (this.externalSelectionFilter["primary_id"].length > 0) {
           if (this.externalSelectionFilter["primary_id"].includes(r["primary_id"])) {
             group = r["gene_names"]
+            if (this.externalSelectionFilter["title"] !== "") {
+              if (this.externalSelectionFilter["primary_id"].includes(r["primary_id"])) {
+                group = this.externalSelectionFilter["title"]
+              }
+            }
           }
         } else if (this.externalSelectionFilter["gene_names"].length > 0 ) {
           if (this.externalSelectionFilter["gene_names"].includes(r["gene_names"])) {
             group = r["gene_names"]
+            if (this.externalSelectionFilter["title"] !== "") {
+              if (this.externalSelectionFilter["gene_names"].includes(r["gene_names"])) {
+                group = this.externalSelectionFilter["title"]
+              }
+            }
           }
         }
       }

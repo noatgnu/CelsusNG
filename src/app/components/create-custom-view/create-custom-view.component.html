@@ -1,0 +1,79 @@
+<div class="container">
+  <h5 class="display-6">Create A Customized View</h5>
+  <div class="card">
+    <div class="card-body">
+      <div class="row">
+        <div class="form-group">
+          <h5 class="card-title">Choose Projects</h5>
+          <input type="text" class="form-control" placeholder="Type Project Name" [(ngModel)]="projectModel" [ngbTypeahead]="searchProject" [resultTemplate]="projectrt" [inputFormatter]="inputFormatter">
+          <button class="btn btn-primary mt-2" (click)="addProject()">Add Project</button>
+        </div>
+      </div>
+      <ng-container *ngIf="projects.length > 0">
+        <table class="table table-striped table-sm">
+          <thead>
+          <tr>
+            <th scope="col">
+              ID
+            </th>
+            <th scope="col">
+              Title
+            </th>
+            <th>
+
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let p of projects">
+            <td>
+              {{p.id}}
+            </td>
+            <td>
+              {{p.title}}
+            </td>
+            <td>
+              <button class="btn btn-danger btn-sm" (click)="remove(p.id, 'project')">X</button>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </ng-container>
+    </div>
+  </div>
+  <div class="card mt-2" *ngIf="projects.length > 0">
+    <div class="card-body">
+      <h5 class="card-title">Choose Comparisons</h5>
+      <div class="row">
+        <ng-container *ngFor="let p of projects">
+          <div class="col-3">
+            <label><b>{{p.title}}</b></label>
+            <select class="form-control" multiple [(ngModel)]="comparisonMap[p.id.toString()]">
+              <option *ngFor="let c of p.comparison" [value]="c.id">
+                {{c.name}}
+              </option>
+            </select>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mt-2" *ngIf="projects.length > 0">
+    <div class="card-body">
+      <h5 class="card-title">Choose Proteins</h5>
+      <div class="row">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Type Gene Names" [(ngModel)]="projectModel" [ngbTypeahead]="searchProject" [resultTemplate]="projectrt" [inputFormatter]="inputFormatter">
+          <button class="btn btn-primary mt-2" (click)="addProject()">Add Project</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn btn-primary mt-2" (click)="submit()">Submit</button>
+</div>
+
+<ng-template #projectrt let-r="result" let-t="term">
+  <ngb-highlight [result]="r.title" [term]="t"></ngb-highlight>
+</ng-template>

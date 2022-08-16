@@ -5,6 +5,7 @@ import {ProjectFormComponent} from "./components/project-form/project-form.compo
 import {ProjectViewerComponent} from "./components/project-viewer/project-viewer.component";
 import {AdminManagementComponent} from "./components/admin-management/admin-management.component";
 import {ProteinViewerComponent} from "./components/protein-viewer/protein-viewer.component";
+import {CreateCustomViewComponent} from "./components/create-custom-view/create-custom-view.component";
 
 const routes: Routes = [
   {path: "", component: HomeComponent},
@@ -13,6 +14,7 @@ const routes: Routes = [
   {path: "project/:id/:session", component: ProjectViewerComponent},
   {path: "protein/:protein_id/:project_id", component: ProteinViewerComponent},
   {path: "protein/:protein_id/:project_id/:session", component: ProteinViewerComponent},
+  {path: "customize", component: CreateCustomViewComponent},
   {path: "admin", component: AdminManagementComponent}
 ];
 

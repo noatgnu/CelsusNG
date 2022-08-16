@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Project} from "../classes/project";
 import {environment} from "../../environments/environment";
+import {Observable} from "rxjs";
+import {QuickResults} from "../classes/quick-results";
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +17,26 @@ export class WebService {
   currentPage = 1
   per_page = 20
   access_token = ""
+
+  filters: any = {
+    Kinases: {filename: "kinases.txt", name: "Kinases"},
+    LRRK2: {filename: "lrrk2.txt", name: "LRRK2 Pathway"},
+    Phosphatases: {filename: "phosphatases.txt", name: "Phosphatases"},
+    PD: {filename: "pd.txt", name: "PD Genes (Mendelian)"},
+    PINK1: {filename: "pink1.txt", name: "PINK1 Pathway"},
+    PDGWAS: {filename: "pd.gwas.txt", name: "PD Genes (GWAS)"},
+    DUBS: {filename: "dubs.txt", name: "Deubiquitylases (DUBs)"},
+    E1_E2_E3Ligase: {filename: "e3ligase.txt", name: "E1, E2, E3 Ligases"},
+    AD: {filename: "AD.txt", name: "AD Genes"},
+    Mito: {filename: "Mito.txt", name: "Mitochondrial Proteins"},
+    Golgi: {filename: "Golgi.txt", name: "Golgi Proteins"},
+    Lysosome: {filename: "Lysosome.txt", name: "Lysosomal Proteins"},
+    Glycosylation: {filename: "glyco.txt", name: "Glycosylation Proteins"},
+    Metabolism: {filename: "metabolism.txt", name: "Metabolism Pathway"},
+    Cathepsins: {filename: "cathepsins.txt", name: "Cathepsins"},
+    MacrophageLRRK2Inhibition: {filename: "macrophages.lrrk2.inhibition", name: "LRRK2 inhibition in iPSC-derived macrophages"}
+  }
+
   constructor(private http: HttpClient) { }
 
   submitProject(project: Project) {
@@ -102,5 +124,19 @@ export class WebService {
 
   getSession(id: string) {
     return this.http.get(this.hostURL + "/api/session/" + id + "/", {responseType: "json", observe: "body"})
+  }
+
+  async getFilter(categoryName: string) {
+    if (this.filters[categoryName]) {
+      const res = await this.http.get("assets/proteinLists/" + this.filters[categoryName].filename, {observe: "body", responseType: "text"}).toPromise()
+      if (res) {
+        return res
+      }
+    }
+    return ""
+  }
+
+  getQuickData(term: string, type: string, project: number[] = []): Observable<QuickResults> {
+    return this.http.post<QuickResults>(this.hostURL + "/api/quick/", {term, type, project}, {observe: "body", responseType: "json"})
   }
 }

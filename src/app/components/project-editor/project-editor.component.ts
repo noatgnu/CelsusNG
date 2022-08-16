@@ -18,7 +18,6 @@ export class ProjectEditorComponent implements OnInit {
   finished = false
   @Input() set project_id(value: number) {
     this.web.getProjects([value.toString()]).subscribe(data => {
-      console.log(data)
       // @ts-ignore
       const d: Date = new Date(data["results"][0].date*1000)
       const g: NgbDateStruct = {day: d.getDay(), month: d.getMonth(), year: d.getFullYear()}

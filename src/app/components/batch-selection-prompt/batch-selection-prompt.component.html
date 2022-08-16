@@ -1,0 +1,31 @@
+<div class="modal-header">
+  Batch Selection
+</div>
+<div class="modal-body">
+  <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-2">
+    <div class="form-group">
+      <input type="text" class="form-control" placeholder="Search Title" [(ngModel)]="data.title">
+    </div>
+    <div class="form-group">
+      <select class="form-control" [(ngModel)]="data.searchType">
+        <option value="gene_names">Gene Names</option>
+        <option value="primary_ids">Primary IDs</option>
+      </select>
+    </div>
+    <div ngbDropdown class="d-inline-block">
+      <button type="button" class="btn btn-outline-primary" id="premadeList" ngbDropdownToggle>
+        Built-in Protein List
+      </button>
+      <div ngbDropdownMenu aria-labelledby="premadeList">
+        <button ngbDropdownItem *ngFor="let b of builtInList" (click)="updateTextArea(b)">
+          {{web.filters[b].name}}
+        </button>
+      </div>
+    </div>
+  </div>
+  <textarea class="form-control mt-2" placeholder="Gene Names or Primary IDs separated by newline" [(ngModel)]="data.data" [rows]="10"></textarea>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-primary" (click)="submit()">Submit</button>
+  <button type="button" class="btn btn-primary" (click)="modal.dismiss()">Close</button>
+</div>

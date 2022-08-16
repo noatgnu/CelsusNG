@@ -5,6 +5,7 @@ import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {ProjectModalComponent} from "../project-modal/project-modal.component";
 import {DataService} from "../../service/data.service";
 import {RawDataModalComponent} from "../raw-data-modal/raw-data-modal.component";
+import {BatchSelectionPromptComponent} from "../batch-selection-prompt/batch-selection-prompt.component";
 
 @Component({
   selector: 'app-data-viewer',
@@ -36,6 +37,11 @@ export class DataViewerComponent implements OnInit {
   per_page = 20
   private _session: any = {}
   updateSessionLater: boolean = true
+  _geneNames: string[] = []
+  get geneNames(): string[] {
+    return this.dataService.geneNames.filter(a => this.filterSearch(this.geneNamesFilterModel, a))
+  }
+
   @Input() set session(value: any) {
     this._session = value
     // if ("_id" in value) {
@@ -85,16 +91,17 @@ export class DataViewerComponent implements OnInit {
       this.web.getProjects(this.dataService.projectIDs).subscribe(data => {
         // @ts-ignore
         if (data["results"]) {
-          console.log(this._session)
+          // @ts-ignore
+          for (const p of data["results"]) {
+            this.dataService.projects[p.id.toString()] = p
+          }
           if (!("_id" in this._session)) {
             this.filterToggleMap["project_id"] = {"activeFilter": 0}
             // @ts-ignore
             for (const p of data["results"]) {
               this.filterToggleMap["project_id"][p.id.toString()] = false
-              this.dataService.projects[p.id.toString()] = p
             }
           }
-          console.log(this.filterToggleMap)
           if (this.updateSessionLater) {
             for (const f in this.filterToggleMap) {
               if (this._session[f]) {
@@ -120,13 +127,13 @@ export class DataViewerComponent implements OnInit {
     //this.displayDF = this._data.where(r =>  comparison_id_list.includes(r["comparison_id"].toString()) && primary_id_list.includes(r["primary_id"]) && project_id_list.includes(r["comparison"]["project_id"].toString())).bake()
   }
 
-  private performUpdate() {
-    console.log(this.updateSessionLater)
+  private performUpdate(title: string = "") {
     const filter: any = {
       "comparison_id": [],
       "primary_id": [],
       "project_id": [],
-      "gene_names": []
+      "gene_names": [],
+      "title": title
     }
     for (const s in this.filterToggleMap) {
       if (this.filterToggleMap[s]["activeFilter"] !== 0) {
@@ -165,6 +172,7 @@ export class DataViewerComponent implements OnInit {
       }*/
     }
     this.filter = filter
+
     console.log(filter)
     this.selected.emit(this.filter)
 
@@ -201,7 +209,9 @@ export class DataViewerComponent implements OnInit {
   }
 
   updateViewer(e: number) {
-    this.web.searchDifferentialAnalysis([],e,20,"filter",this.filter).subscribe(data => {
+    this.web.searchDifferentialAnalysis([],e,20,"filter",this.filter, this.ignoreAvailability).subscribe(data => {
+      console.log(data)
+      console.log(this.filter)
       data = data.replace(/NaN/g, "null")
       const res = JSON.parse(data)
       this.displayDF = new DataFrame(res["results"])
@@ -227,8 +237,7 @@ export class DataViewerComponent implements OnInit {
 
   filterSearch(term: string, source: string) {
     if (term !== "") {
-      const match = new RegExp(term, "mi").test(source)
-      return match
+      return new RegExp(term, "mi").test(source)
     } else {
       return true
     }
@@ -259,5 +268,54 @@ export class DataViewerComponent implements OnInit {
       return window.location.href.replace(this._session["_id"], "") + this.sessionID
     }
     return window.location.href + "/" + this.sessionID
+  }
+
+  openBatchSearch() {
+    const ref = this.modal.open(BatchSelectionPromptComponent)
+    ref.closed.subscribe(data => {
+      this.filterToggleMap = {"project_id": {"activeFilter": 0}, "primary_id": {"activeFilter": 0}, "comparison_id": {"activeFilter": 0}, "gene_names": {"activeFilter": 0}}
+      let res: string[] = []
+      for (const r of data.data.split("\n")) {
+        const n = r.replace(/\n/g, "").replace(/\r/g, "")
+        if (n !== "") {
+          const pattern = new RegExp(n.toUpperCase() +"?\\s")
+          let result: string[] = []
+          switch (data.searchType) {
+            case "gene_names":
+              result = this.dataService.geneNames.filter(a => {
+                if (a) {
+                  return pattern.test(a.toUpperCase());
+                }
+                return false
+              })
+              break
+            case "primary_ids":
+              result = this.dataService.primaryIDs.filter(a => {
+                if (a) {
+                  return pattern.test(a.toUpperCase());
+                }
+                return false
+              })
+              break
+          }
+          if (result.length > 0) {
+            res = res.concat(result)
+          }
+        }
+      }
+      for (const r of res) {
+        switch (data.searchType) {
+          case "gene_names":
+            this.updateFilterCounter("gene_names", r);
+            break
+          case "primary_ids":
+            this.updateFilterCounter("primary_id", r);
+            break
+        }
+      }
+      if (res.length > 0) {
+        this.performUpdate(data.title)
+      }
+    })
   }
 }

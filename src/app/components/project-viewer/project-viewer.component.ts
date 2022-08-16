@@ -52,7 +52,8 @@ export class ProjectViewerComponent implements OnInit {
                     }
                     if ("unique_project_ids" in res) {
                       // @ts-ignore
-                      this.data.projectIDs = res["unique_project_ids"]
+                      this.data.projectIDs = res["unique_project_ids"].map(a => a.toString())
+
                     }
                     if ("unique_gene_names" in res) {
                       // @ts-ignore
